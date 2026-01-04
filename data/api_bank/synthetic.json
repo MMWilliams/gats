@@ -1,0 +1,26 @@
+[
+  {
+    "query": "What is the weather?",
+    "api_list": [
+      {
+        "api": "get_weather",
+        "params": {
+          "city": "NYC"
+        }
+      }
+    ],
+    "level": 1
+  },
+  {
+    "query": "Book flight and hotel",
+    "api_list": [
+      {
+        "api": "search_flights"
+      },
+      {
+        "api": "book_hotel"
+      }
+    ],
+    "level": 2
+  }
+]

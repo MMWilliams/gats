@@ -1,0 +1,26 @@
+[
+  {
+    "query": "Get stock price",
+    "tools": [
+      "finance_api"
+    ],
+    "answer": [
+      {
+        "tool": "finance_api",
+        "action": "get_price"
+      }
+    ]
+  },
+  {
+    "query": "Send email",
+    "tools": [
+      "email_api"
+    ],
+    "answer": [
+      {
+        "tool": "email_api",
+        "action": "send"
+      }
+    ]
+  }
+]

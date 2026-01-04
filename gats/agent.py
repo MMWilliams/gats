@@ -566,26 +566,30 @@ class LATSAgent:
         self.n_samples = n_samples
         self.max_depth = max_depth
     
-    def _reflect(self, trajectory: list[tuple[State, Candidate]], final_state: State, goal: frozenset[str]) -> float:
-        """Simulate LLM reflection on trajectory quality."""
-        if final_state.is_goal():
-            return 1.0
+    # def _reflect(self, trajectory: list[tuple[State, Candidate]], final_state: State, goal: frozenset[str]) -> float:
+    #     """Simulate LLM reflection on trajectory quality."""
+    #     if final_state.is_goal():
+    #         return 1.0
         
-        # Multi-goal aware: track progress toward ALL goals
-        goals_achieved = len(final_state.inventory & goal)
-        total_goals = len(goal)
-        goal_progress = goals_achieved / max(1, total_goals)
+    #     # Multi-goal aware: track progress toward ALL goals
+    #     goals_achieved = len(final_state.inventory & goal)
+    #     total_goals = len(goal)
+    #     goal_progress = goals_achieved / max(1, total_goals)
         
-        # Penalize dead-ends
-        legal = self.action_model.get_legal_actions(final_state)
-        if not legal:
-            return 0.05 + goal_progress * 0.1
+    #     # Penalize dead-ends
+    #     legal = self.action_model.get_legal_actions(final_state)
+    #     if not legal:
+    #         return 0.05 + goal_progress * 0.1
         
-        # Reward new items that could lead to goals
-        new_items = len(final_state.inventory)
+    #     # Reward new items that could lead to goals
+    #     new_items = len(final_state.inventory)
         
-        return min(0.95, goal_progress * 0.7 + 0.2 + new_items * 0.01)
-
+    #     return min(0.95, goal_progress * 0.7 + 0.2 + new_items * 0.01)
+    def _reflect(self, trajectory, final_state, goal) -> tuple[str, float]:
+        """Use LLM to generate verbal reflection and score."""
+        prompt = self._build_reflection_prompt(trajectory, final_state, goal)
+        response = self.llm.generate(prompt)
+        return response.text, self._parse_score(response)
     def _expand_node(
         self, 
         state: State, 
