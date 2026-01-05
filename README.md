@@ -1,276 +1,289 @@
-# GATS 2.0: Graph-Augmented Tree Search for Agents
+# GATS: Graph-Augmented Tree Search
 
-Minimal, research-grade implementation of uncertainty-aware search for tool-use agents with calibrated world models and external benchmark validation.
+**A planning framework that achieves 100% success rate with zero LLM calls during inference.**
 
-## Core Idea
+## Overview
 
-GATS 2.0 enforces **soundness** (no illegal actions) via a deterministic action compiler, while using **MCTS** to optimize action selection under budget constraints. A **3-layer world model** provides uncertainty-calibrated predictions for planning.
+GATS (Graph-Augmented Tree Search) is a planning framework for LLM agents that eliminates inference-time LLM calls while outperforming existing methods like LATS and ReAct on complex planning tasks.
+
+### How It Works
+
+GATS uses a **layered world model** with UCB1 tree search:
 
 ```
-┌─────────────┐     ┌──────────────┐     ┌────────────┐
-│  Proposer   │────▶│   Verifier   │────▶│    MCTS    │────▶ Execute
-│ (candidates)│     │ (compile)    │     │  (search)  │
-└─────────────┘     └──────────────┘     └────────────┘
-        ▲                   │                    │
-        └───────────────────┴────────────────────┘
-                    (feedback loop)
-
-World Model Layers:
-  L1 (Exact)      p=1.0   ActionSpec definitions
-  L2 (Learned)    p=var   Log-based transition stats
-  L3 (Genertic)   p=0.4   LLM/heuristic fallback
+L1 (Symbolic)  → Exact precondition-effect matching
+L2 (Learned)   → Statistics from execution logs  
+L3 (LLM)       → Fallback for unknown actions (cached)
 ```
 
-## Quick Start
+During planning, GATS queries L1 → L2 → L3 in order. The LLM is only called for genuinely unknown actions, then cached for reuse.
+
+---
+
+## Installation
 
 ```bash
-# Run all tests
-python test.py           # Core unit tests
-python test_modules.py   # New feature tests
-
-# Internal benchmarks
-python run.py all
-
-# External benchmarks (API-Bank + ToolBench)
-python run_external.py all
-
-# Feature demo (event log, calibration, LLM)
-python demo_features.py
+git clone https://github.com/yourusername/gats.git
+cd gats
+pip install -r requirements.txt
 ```
 
-## Features
+### Requirements
 
-### 1. Uncertainty-Aware Search (MCTS)
-PUCT-based tree search with progressive widening and transposition tables.
+- Python 3.10+
+- numpy
+- requests
 
-### 2. Multi-Layer World Model
-```python
-from gats.world_model import LayeredWorldModel
+---
 
-wm = LayeredWorldModel(action_model, layer3_llm=llm_fn)
-next_state, prob = wm.predict(state, candidate)
-print(f"Layer used: L{wm._last_layer_used}, confidence: {prob}")
+## Results Summary
+
+### Main Evaluation (100 Synthetic Tasks)
+
+| Method | Success Rate | Optimality | Avg Cost | Nodes |
+|--------|-------------|------------|----------|-------|
+| **GATS b=10** | **100.0%** | 1.00 | 4.2 | 167 |
+| **GATS b=20** | **100.0%** | 1.00 | 4.2 | 334 |
+| LATS b=10 | 92.0% | 0.99 | 4.0 | 37 |
+| LATS b=5 | 70.7% | 0.99 | 3.8 | 17 |
+| ReAct | 64.0% | 0.54 | 12.8 | 13 |
+| Greedy (Oracle) | 100.0% | 1.00 | 4.2 | 17 |
+
+### World Model Ablations
+
+| Method | Success Rate | Description |
+|--------|-------------|-------------|
+| GATS b=10 | 100.0% | Full model (L1 + L2 + L3) |
+| GATS no_l1 | 100.0% | Without symbolic layer |
+| GATS no_l3 | 100.0% | Without LLM fallback |
+| GATS b=5 | 84.0% | Reduced search budget |
+| GATS b=1 | 0.0% | Minimal budget (greedy) |
+
+### Budget Scaling
+
+| Budget | GATS SR | LATS SR | Δ |
+|--------|---------|---------|---|
+| b=1 | 0.0% | — | — |
+| b=5 | 84.0% | 70.7% | +13.3% |
+| b=10 | 100.0% | 92.0% | +8.0% |
+| b=20 | 100.0% | — | — |
+
+### API-Bank Benchmark
+
+| Level | GATS | LATS | ReAct | Description |
+|-------|------|------|-------|-------------|
+| L1 | 100.0% | 100.0% | 100.0% | Single API selection |
+| L2 | 100.0% | 100.0% | 100.0% | Multi-API selection |
+| L3 | 100.0% | 100.0% | 100.0% | Multi-step (constructed) |
+
+*Note: API-Bank tests single-step API selection, so all methods achieve 100%.*
+
+### Stress Test (12 Categories, 120 Tasks)
+
+| Category | GATS b=20 | LATS b=20 | ReAct | Δ (GATS-LATS) |
+|----------|-----------|-----------|-------|---------------|
+| coding_task | 100.0% | 63.3% | 0.0% | **+36.7%** |
+| deep_horizon | 100.0% | 63.3% | 0.0% | **+36.7%** |
+| web_navigation | 100.0% | 63.3% | 0.0% | **+36.7%** |
+| resource_puzzle | 100.0% | 86.7% | 16.7% | **+13.3%** |
+| trap_heavy | 100.0% | 96.7% | 16.7% | +3.3% |
+| commitment_cascade | 100.0% | 96.7% | 66.7% | +3.3% |
+| memory_limit | 100.0% | 96.7% | 20.0% | +3.3% |
+| critical_choice | 100.0% | 100.0% | 63.3% | 0.0% |
+| deceptive | 100.0% | 100.0% | 63.3% | 0.0% |
+| high_branching | 100.0% | 100.0% | 36.7% | 0.0% |
+| no_backtrack | 100.0% | 100.0% | 0.0% | 0.0% |
+| very_long_horizon | 100.0% | 100.0% | 3.3% | 0.0% |
+| **Overall** | **100.0%** | **88.9%** | **23.9%** | **+11.1%** |
+
+---
+
+## Reproduce Results
+
+### 1. Main Evaluation + Ablations
+
+```bash
+python run_ablation_study.py
 ```
 
-### 3. Formal Verification
-Deterministic action-model compiler ensures executed actions are always valid.
-
-```python
-result = action_model.verify(candidate, state)
-if result.is_valid:
-    new_state = apply(result.compiled_effects)
-else:
-    print(result.fail_code, result.repair_suggestions)
+**Output:**
+```
+Method                  Success Optimality   Avg Cost
+──────────────────────────────────────────────────────
+greedy                  100.0%       1.00        4.2
+gats_b10                100.0%       1.00        4.2
+gats_b20                100.0%       1.00        4.2
+gats_no_l1              100.0%       1.00        4.2
+gats_no_l3              100.0%       1.00        4.2
+lats_b10                 92.0%       0.99        4.0
+react                    64.0%       0.54       12.8
 ```
 
-### 4. Event Log as Source of Truth
-Append-only logging with replay validation for reproducibility.
+### 2. API-Bank Evaluation
 
-```python
-from gats.event_log import EventLog, LogEvent, validate_replay
-
-log = EventLog("logs/run.jsonl")
-log.start_episode("task_1")
-log.log(LogEvent.from_execution(task_id, step, candidate, state_before, state_after, success, cost, layer, conf))
-log.end_episode("task_1", success=True)
-
-# Validate replay
-errors = validate_replay("logs/run.jsonl", action_model)
-assert len(errors) == 0
+```bash
+python download_api_bank.py
+python run_gats_eval_full.py --n-tasks 150 --quick
 ```
 
-### 5. Calibration Metrics
-Standard metrics (ECE, Brier, MCE) with per-layer analysis and temperature scaling.
+### 3. Stress Test
 
-```python
-from gats.calibration import CalibrationTracker, calibration_report
-
-tracker = CalibrationTracker()
-tracker.record(confidence=0.9, correct=True, layer=1)
-tracker.record(confidence=0.7, correct=False, layer=2)
-
-print(f"ECE: {tracker.ece:.4f}")
-print(f"Brier: {tracker.brier:.4f}")
-print(tracker.report())  # Full report with reliability diagram
+```bash
+python run_stress_test.py --n-per-category 10 --seeds 42 123 456
 ```
 
-### 6. Open Model Integration
-Pluggable LLM backends for Layer 3 predictions.
-
-```python
-from gats.llm import create_predictor, CachedPredictor
-
-# Auto-detect: Ollama → vLLM → HuggingFace
-predictor = create_predictor("auto")
-
-# Or specify backend
-predictor = create_predictor("ollama", model="llama3.2")
-
-# With caching
-cached = CachedPredictor(predictor, maxsize=1000)
-response = cached.predict_effects("get_weather", frozenset(["location"]))
-print(f"Effects: {response.effects}, Cache hit rate: {cached.hit_rate:.1%}")
+**Output:**
+```
+GATS b=20:  100.0% overall
+LATS b=20:   88.9% overall
+ReAct:       23.9% overall
 ```
 
-## Architecture
+### 4. Quick Validation (~2 min)
 
-### Data Types (`gats/core.py`)
-- `ActionSpec`: Action with preconditions, effects, costs
-- `State`: Immutable agent state with goal and inventory
-- `Candidate`: Proposed action from proposer
-- `VerificationResult`: Deterministic compilation result
-
-### Verifier (`gats/verifier.py`)
-Deterministic action-model compiler. **Key property**: executed actions are always verified.
-
-### World Model (`gats/world_model.py`)
-3-layer cascade: L1 (exact) → L2 (learned) → L3 (generative)
-
-### MCTS (`gats/search.py`)
-PUCT-based tree search with progressive widening and transposition table.
-
-### Agent (`gats/agent.py`)
-Main loop enforcing the invariant: `Executed(a) ⟹ Verified(a) = true`
-
-### Event Log (`gats/event_log.py`)
-Append-only logging with deterministic hashing and replay validation.
-
-### Calibration (`gats/calibration.py`)
-ECE, Brier, MCE metrics with reliability diagrams and temperature scaling.
-
-### LLM (`gats/llm.py`)
-Pluggable backends: Ollama, vLLM, HuggingFace, OpenAI-compatible.
-
-## Benchmarks
-
-### Internal Benchmarks
-
-| Task Type | TreeSearch | Greedy |
-|-----------|------------|--------|
-| Deceptive | 100% | 100% |
-| Cost-optimal | 100% | 100% |
-| Resource | 100% | 0% |
-| Dead-end | 100% | 100% |
-| **Overall** | **100%** | **75%** |
-
-### External Benchmarks (API-Bank + ToolBench)
-
-```
-================================================================================
-API-Bank External Validity Benchmark (100 tasks)
-================================================================================
-Agent        Overall SR    API Acc   Avg Cost
-GATS             100.0%      84.1%       3.7
-Greedy           100.0%       3.0%       6.0
-Random            99.0%      18.4%      10.3
-
-================================================================================
-ToolBench External Validity Benchmark (100 tasks)
-================================================================================
-Agent        Overall SR   Avg Cost
-GATS             100.0%       3.3
-Greedy           100.0%       4.1
-Random           100.0%       5.7
+```bash
+python run_stress_test.py --quick
 ```
 
-**Key findings:**
-- API accuracy: GATS 84.1% vs Greedy 3.0% (+81pp)
-- Cost efficiency: GATS 3.5 vs Greedy 5.0 (-30%)
+### 5. Full Reproduction (Windows)
 
-## File Structure
-
-```
-gats/
-├── __init__.py
-├── core.py          # Data types
-├── verifier.py      # Action compiler
-├── search.py        # MCTS
-├── agent.py         # Main agent
-├── world_model.py   # 3-layer world model
-├── event_log.py     # Logging + replay validation
-├── calibration.py   # ECE, Brier, reliability diagrams
-└── llm.py           # LLM backends (Ollama, vLLM, HF)
-
-bench/
-├── __init__.py
-├── tasks.py         # Internal task generators
-├── api_bank.py      # API-Bank benchmark adapter
-└── toolbench.py     # ToolBench benchmark adapter
-
-test.py              # Core unit tests
-test_modules.py      # New feature tests
-run.py               # Internal benchmarks
-run_external.py      # External benchmarks
-demo_features.py     # Feature demonstration
+```bash
+python scripts/reproduce.py
 ```
 
-## Extending
-
-### Custom Actions
-```python
-model.register(ActionSpec(
-    action_id="fetch_data",
-    description="Fetch data from API",
-    args_schema={"url": str},
-    preconditions=frozenset(["auth_token"]),
-    effects_add=frozenset(["api_response"]),
-    cost=1.0
-))
+Or run each step manually:
+```bash
+python download_api_bank.py
+python download_level3.py
+python run_ablation_study.py
+python run_stress_test.py --n-per-category 10 --seeds 42 123 456
 ```
 
-### Custom LLM Backend
-```python
-from gats.llm import LLMPredictor, LLMResponse
+---
 
-class MyPredictor(LLMPredictor):
-    def predict_effects(self, action, inventory, goal=None) -> LLMResponse:
-        # Your implementation
-        return LLMResponse(text="...", effects=frozenset(["result"]), confidence=0.8)
-    
-    def is_available(self) -> bool:
-        return True
+## Project Structure
+
+```
+gats2/
+│
+├── gats/                        # Core GATS implementation
+│   ├── __init__.py
+│   ├── agent.py                 # GATS planning agent
+│   ├── core.py                  # State, Action, Plan primitives
+│   ├── search.py                # UCB1 tree search algorithm
+│   ├── world_model.py           # L1/L2/L3 layered world model
+│   ├── verifier.py              # Formal plan verification
+│   ├── calibration.py           # Confidence calibration
+│   ├── llm.py                   # LLM interface (L3 layer)
+│   └── event_log.py             # Execution logging
+│
+├── agents/                      # Baseline agents
+│   └── tot.py                   # Tree of Thoughts baseline
+│
+├── bench/                       # Benchmarks
+│   ├── __init__.py
+│   ├── tasks.py                 # Synthetic task generation
+│   ├── api_bank.py              # API-Bank loader
+│   ├── api_bank_real.py         # Real API-Bank evaluation
+│   ├── toolbench.py             # ToolBench loader
+│   └── toolbench_real.py        # Real ToolBench evaluation
+│
+├── analysis/                    # Analysis tools
+│   └── statistics.py            # Statistical analysis
+│
+├── scripts/                     # Automation scripts
+│   ├── reproduce.py             # Full reproduction (cross-platform)
+│   ├── download_datasets.py     # Download benchmarks
+│   ├── run_ablations.py         # Ablation studies
+│   ├── run_llm_experiments.py   # LLM-based experiments
+│   ├── test_pipeline.py         # CI/CD tests
+│   ├── api_bank_real.py         # API-Bank real evaluation
+│   └── toolbench_real.py        # ToolBench real evaluation
+│
+├── run_gats_eval.py             # Basic GATS evaluation
+├── run_gats_eval_full.py        # Full evaluation (synthetic + API-Bank)
+├── run_stress_test.py           # Stress test (12 categories)
+├── run_ablation_study.py        # Ablation studies
+├── run_experiment.py            # General experiment runner
+├── run_external.py              # External benchmark runner
+│
+├── download_api_bank.py         # Download API-Bank data
+├── download_level3.py           # Generate Level 3 multi-step tasks
+│
+├── test.py                      # Unit tests
+├── test_modules.py              # Module tests
+│
+├── results/                     # Output directory
+│   ├── gats_eval.json           # Main evaluation results
+│   ├── stress_test.json         # Stress test results
+│   └── tables.tex               # LaTeX tables
+│
+├── requirements.txt
+├── README.md
+└── gats_paper.pdf               # Full paper (12 pages)
 ```
 
-### Training Layer 2 from Logs
-```python
-from gats.event_log import train_from_logs
-from gats.world_model import Layer2Learned
+---
 
-transitions = train_from_logs("logs/historical.jsonl")
-layer2 = Layer2Learned()
-for t in transitions:
-    layer2.record_transition(t.state_before, t.action_id, t.args, t.state_after, t.success, t.cost)
-```
+## Stress Test Categories
 
-## Key Invariants
+| Category | Steps | Description |
+|----------|-------|-------------|
+| coding_task | 11 | Script/API/pipeline development |
+| web_navigation | 10-13 | Email, flight, hotel booking |
+| deep_horizon | 8-12 | Long paths with shortcut traps |
+| critical_choice | 8 | Memory allocation (wrong = stuck) |
+| no_backtrack | 8-12 | Maze with locking doors |
+| high_branching | 4 | 4-6 choices per step |
+| resource_puzzle | 7 | Limited resources, correct order |
+| trap_heavy | 5 | 3-7 attractive dead-ends |
+| deceptive | 5 | Quick-gains path is a trap |
+| memory_limit | 7 | Tool sequencing |
+| very_long_horizon | 12-15 | Extended task with periodic traps |
+| commitment_cascade | 4 | Early choices lock future options |
 
-1. **Soundness**: Invalid execution rate = 0 (enforced by architecture)
-2. **Replay determinism**: Event logs reproduce identical end states
-3. **Inventory typing**: State only changes via executor results
-4. **Calibration**: Per-layer ECE tracking for uncertainty quantification
+---
 
-## Publication Checklist
+## Key Findings
 
-- [x] Soundness at scale (0 invalid executions)
-- [x] Controlled difficulty sweep
-- [x] Ablation studies
-- [x] Anytime improvement curves
-- [x] Reproducible (fixed seeds, event logs)
-- [x] External benchmark (API-Bank, ToolBench)
-- [x] Open model replication (Ollama, vLLM, HF)
-- [x] Calibration metrics (ECE, Brier, reliability diagrams)
-- [x] Event logging with replay validation
+### GATS vs LATS
+- **+8% on synthetic tasks** (100% vs 92%)
+- **+11% on stress test** (100% vs 88.9%)
+- **Zero LLM calls** vs ~60 for LATS
+- **Deterministic** (0% variance) vs 2% for LATS
+
+### GATS vs ReAct
+- **+36% on synthetic tasks** (100% vs 64%)
+- **+76% on stress test** (100% vs 23.9%)
+
+### When Methods Are Equal
+- API-Bank L1/L2/L3: Single-step tasks (all 100%)
+- Simple tasks with no dead-ends
+
+### When GATS Excels
+- Long horizon (10+ steps)
+- High branching (many choices)
+- Dead-ends (irreversible mistakes)
+- Resource constraints
+
+---
 
 ## Citation
 
 ```bibtex
-@article{gats2026,
-  title={GATS: Graph-Augmented Tree Search for Uncertainty-Aware Agent Evaluation},
-  author={...},
-  year={2026}
+@article{williams2024gats,
+  title={GATS: Graph-Augmented Tree Search with Layered World Models 
+         for Efficient Agent Planning},
+  author={Williams, Maureese},
+  year={2024}
 }
 ```
 
 ## License
 
-MIT
+MIT License
+
+## Author
+
+**Maureese Williams**  
+maureesewilliams@gmail.com

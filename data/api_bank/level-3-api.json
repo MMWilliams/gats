@@ -1,0 +1,1702 @@
+[
+  {
+    "id": "L3_0",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_1",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_2",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_3",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_4",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_5",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_6",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_7",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_8",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_9",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='fatigue')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_10",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_11",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_12",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_13",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_14",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_15",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SearchEngine(keyword='the sustainable development')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "SearchEngine",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_16",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SearchEngine(keyword='the sustainable development')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "SearchEngine",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_17",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SearchEngine(keyword='the sustainable development')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "SearchEngine",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_18",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SearchEngine(keyword='the sustainable development')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "SearchEngine",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_19",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SearchEngine(keyword='the sustainable development')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "SearchEngine",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_20",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_21",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_22",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_23",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_24",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_25",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_26",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_27",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_28",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_29",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_30",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_31",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_32",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_33",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_34",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='Abdominal pain')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_35",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_36",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_37",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_38",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_39",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[SymptomSearch(symptom='nausea')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "SymptomSearch",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_40",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='history October 6th')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_41",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='history October 6th')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_42",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='history October 6th')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_43",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='history October 6th')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_44",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='history October 6th')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_45",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='Query Stock')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_46",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='Query Stock')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_47",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='Query Stock')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_48",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='Query Stock')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_49",
+    "instruction": "First search for the tool, then use it: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Search and query workflow",
+    "expected_output": "[ToolSearcher(keywords='Query Stock')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "ToolSearcher",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_50",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='bar')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_51",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='bar')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_52",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='bar')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_53",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='bar')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_54",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='bar')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_55",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JaneSmith', password='password')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_56",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JaneSmith', password='password')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_57",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JaneSmith', password='password')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_58",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JaneSmith', password='password')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_59",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JaneSmith', password='password')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_60",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_61",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_62",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_63",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_64",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_65",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_66",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_67",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_68",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_69",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_70",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user4', password='user4pass')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_71",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user4', password='user4pass')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_72",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user4', password='user4pass')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_73",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user4', password='user4pass')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_74",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user4', password='user4pass')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_75",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_76",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_77",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_78",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_79",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_80",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='newpassword')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_81",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='newpassword')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_82",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='newpassword')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_83",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='newpassword')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_84",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='foo', password='newpassword')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_85",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_86",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_87",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_88",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_89",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1pass')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_90",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_91",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_92",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_93",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_94",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='JohnDoe', password='pass123')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_95",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1newpass')] -> [QueryHealthData(user_id='J46801', start_time='2023-03-05 00:00:00', end_time='2023-03-12 00:00:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_96",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1newpass')] -> [QueryScene(name='Morning Routine')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_97",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1newpass')] -> [QueryAlarm(token='o8i7u6y5t4r3e2w1q0', time='2023-03-20 06:30:00')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_98",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1newpass')] -> [QueryMeeting(token='a9s8d7f6g5h4j3k2l1', meeting_topic='Sales Meeting', start_time='2023-03-20 14:00:00', end_time='2023-03-20 16:00:00', location='Conference Room A', attendees='['John Smith', 'Jane Doe']')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryMeeting"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_99",
+    "instruction": "Login first, then query: \nGenerate an API request in the format of [ApiName(key1='value1', key2='value2', ...)] based on the ",
+    "input": "Auth and query workflow",
+    "expected_output": "[GetUserToken(username='user1', password='user1newpass')] -> [QueryStock(stock_code='AMZN', date='2022-03-12')]",
+    "api_sequence": [
+      "GetUserToken",
+      "QueryStock"
+    ],
+    "n_steps": 2
+  },
+  {
+    "id": "L3_100",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_101",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_102",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_103",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_104",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_105",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_106",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_107",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_108",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_109",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_110",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_111",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_112",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_113",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_114",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_115",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_116",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_117",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_118",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_119",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_120",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_121",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_122",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_123",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_124",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_125",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_126",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_127",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_128",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_129",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_130",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_131",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_132",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_133",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_134",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_135",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_136",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_137",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_138",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_139",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_140",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_141",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_142",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_143",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_144",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SymptomSearch(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SymptomSearch",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_145",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SearchEngine(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SearchEngine",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_146",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SearchEngine(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SearchEngine",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_147",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SearchEngine(...)] -> [GetUserToken(...)] -> [QueryAlarm(...)]",
+    "api_sequence": [
+      "SearchEngine",
+      "GetUserToken",
+      "QueryAlarm"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_148",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SearchEngine(...)] -> [GetUserToken(...)] -> [QueryHealthData(...)]",
+    "api_sequence": [
+      "SearchEngine",
+      "GetUserToken",
+      "QueryHealthData"
+    ],
+    "n_steps": 3
+  },
+  {
+    "id": "L3_149",
+    "instruction": "Find tool, authenticate, then query",
+    "input": "Full workflow: search \u2192 auth \u2192 query",
+    "expected_output": "[SearchEngine(...)] -> [GetUserToken(...)] -> [QueryScene(...)]",
+    "api_sequence": [
+      "SearchEngine",
+      "GetUserToken",
+      "QueryScene"
+    ],
+    "n_steps": 3
+  }
+]
