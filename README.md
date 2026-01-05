@@ -271,11 +271,11 @@ gats2/
 ## Citation
 
 ```bibtex
-@article{williams2024gats,
+@article{williams2026gats,
   title={GATS: Graph-Augmented Tree Search with Layered World Models 
          for Efficient Agent Planning},
   author={Williams, Maureese},
-  year={2024}
+  year={2026}
 }
 ```
 
