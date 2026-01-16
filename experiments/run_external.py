@@ -29,8 +29,8 @@ from gats.core import (
     State, ActionSpec, Candidate, Event, Episode,
     ActionModel, WorldModel
 )
-from bench.api_bank import APIBankDataset, APIBankAdapter, APIBankAdapterHard
-from bench.toolbench import ToolBenchDataset, ToolBenchAdapter
+from benchmarks.api_bank import APIBankDataset, APIBankAdapter, APIBankAdapterHard
+from benchmarks.toolbench import ToolBenchDataset, ToolBenchAdapter
 
 
 # =============================================================================
@@ -408,7 +408,7 @@ def run_api_bank(n_tasks: int = 100, seed: int = 42) -> dict[str, dict]:
     dataset = APIBankDataset.generate_synthetic(n_tasks=n_tasks, seed=seed)
     
     # Import hard adapter
-    from bench.api_bank import APIBankAdapterHard
+    from benchmarks.api_bank import APIBankAdapterHard
     
     # Count by level
     for level in [1, 2, 3]:

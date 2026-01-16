@@ -19,7 +19,7 @@ def test_api_bank_dataset() -> TestResult:
     """Test API-Bank dataset loading."""
     start = time.perf_counter()
     try:
-        from bench.api_bank_real import RealAPIBankDataset
+        from benchmarks.api_bank_real import RealAPIBankDataset
         ds = RealAPIBankDataset("data/api_bank").load()
         stats = ds.stats()
         return TestResult("API-Bank Dataset", len(ds) > 0,
@@ -28,7 +28,7 @@ def test_api_bank_dataset() -> TestResult:
     except ImportError as e:
         # Try alternate import
         try:
-            from bench.api_bank import APIBankDataset
+            from benchmarks.api_bank import APIBankDataset
             ds = APIBankDataset()
             return TestResult("API-Bank Dataset", len(ds.tasks) > 0,
                 f"Loaded {len(ds.tasks)} tasks (synthetic)",
@@ -42,7 +42,7 @@ def test_toolbench_dataset() -> TestResult:
     """Test ToolBench dataset loading."""
     start = time.perf_counter()
     try:
-        from bench.toolbench_real import RealToolBenchDataset
+        from benchmarks.toolbench_real import RealToolBenchDataset
         ds = RealToolBenchDataset("data/toolbench").load()
         stats = ds.stats()
         return TestResult("ToolBench Dataset", len(ds) > 0,
@@ -50,7 +50,7 @@ def test_toolbench_dataset() -> TestResult:
             (time.perf_counter() - start) * 1000)
     except ImportError as e:
         try:
-            from bench.toolbench import ToolBenchDataset
+            from benchmarks.toolbench import ToolBenchDataset
             ds = ToolBenchDataset()
             return TestResult("ToolBench Dataset", len(ds.tasks) > 0,
                 f"Loaded {len(ds.tasks)} tasks (synthetic)",

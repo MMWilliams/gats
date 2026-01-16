@@ -5,7 +5,7 @@ from gats import (
     ActionSpec, ActionModel, State, Candidate, VerificationResult, FailCode,
     Agent, GreedyAgent, Episode
 )
-from bench import BenchmarkConfig, generate_chain_task
+from benchmarks import BenchmarkConfig, generate_chain_task
 
 def test_verifier_rejects_invalid():
     """Verifier correctly rejects invalid actions."""

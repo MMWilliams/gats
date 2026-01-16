@@ -119,11 +119,11 @@ class ExperimentRunner:
         
         # Load dataset
         if config.benchmark == "api_bank":
-            from bench.api_bank_real import RealAPIBankDataset
+            from benchmarks.api_bank_real import RealAPIBankDataset
             dataset = RealAPIBankDataset(Path("data/api_bank")).load()
             tasks = dataset.tasks[:config.max_tasks]
         elif config.benchmark == "toolbench":
-            from bench.toolbench_real import RealToolBenchDataset
+            from benchmarks.toolbench_real import RealToolBenchDataset
             dataset = RealToolBenchDataset(Path("data/toolbench")).load()
             tasks = dataset.tasks[:config.max_tasks]
         else:
