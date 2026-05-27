@@ -1,79 +1,41 @@
-# pyproject.toml
-
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "gats"
-version = "2.0.0"
-description = "Graph-Augmented Tree Search for Tool-Augmented Language Agents"
+version = "1.0.0"
+description = "GATS — Graph-Augmented Tree Search with layered world models for efficient agent planning"
 readme = "README.md"
 license = {text = "MIT"}
-authors = [
-    {name = "Your Name", email = "you@example.com"}
-]
-keywords = ["llm", "agents", "planning", "mcts", "tool-use"]
+authors = [{name = "Maureese Williams", email = "maureesewilliams@gmail.com"}]
+keywords = ["llm", "agents", "planning", "mcts", "tool-use", "world-models"]
+requires-python = ">=3.10"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
-requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.24.0",
-    "scipy>=1.10.0",
-    "requests>=2.28.0",
+    "matplotlib>=3.7.0",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-    "black>=23.0",
-    "ruff>=0.1.0",
-    "mypy>=1.0",
-]
-llm = [
-    "transformers>=4.35.0",
-    "torch>=2.0.0",
-    "vllm>=0.2.0",
-]
-analysis = [
-    "matplotlib>=3.7.0",
-    "pandas>=2.0.0",
-    "seaborn>=0.12.0",
-]
-all = ["gats[dev,llm,analysis]"]
+dev = ["pytest>=7.0"]
+llm = ["requests>=2.28.0"]   # Only needed for --backend ollama
 
 [project.urls]
-Repository = "https://github.com/yourusername/gats"
-Documentation = "https://gats.readthedocs.io"
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["gats*", "bench*"]
-
-[tool.black]
-line-length = 100
-target-version = ["py310", "py311"]
-
-[tool.ruff]
-line-length = 100
-select = ["E", "F", "I", "N", "W", "UP"]
-ignore = ["E501"]  # Line length handled by black
-
-[tool.mypy]
-python_version = "3.10"
-warn_return_any = true
-warn_unused_configs = true
-ignore_missing_imports = true
+Repository = "https://github.com/MMWilliams/gats"
+Paper = "https://github.com/MMWilliams/gats/blob/master/paper/gats_preprint.pdf"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "-v --cov=gats --cov-report=term-missing"
+addopts = "-q"

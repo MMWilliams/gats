@@ -1,270 +1,116 @@
-# GATS: Graph-Augmented Tree Search
+# GATS — Graph-Augmented Tree Search with Layered World Models
 
-**A planning framework that achieves 100% success rate with zero LLM calls during inference.**
+Reproducibility repository for the preprint
+**"GATS: Graph-Augmented Tree Search with Layered World Models for Efficient
+Agent Planning"** ([paper/gats_preprint.pdf](paper/gats_preprint.pdf)).
 
-## Overview
+GATS combines UCB1 tree search with a three-layer world model
+(symbolic → learned → LLM fallback) to plan multi-step agent tasks with
+**zero LLM inference calls** during planning, while matching or exceeding
+LATS and ReAct.
 
-GATS (Graph-Augmented Tree Search) is a planning framework for LLM agents that eliminates inference-time LLM calls while outperforming existing methods like LATS and ReAct on complex planning tasks.
+## Headline results (from `python reproduce.py`)
 
-### How It Works
-
-GATS uses a **layered world model** with UCB1 tree search:
-
-```
-L1 (Symbolic)  → Exact precondition-effect matching
-L2 (Learned)   → Statistics from execution logs  
-L3 (LLM)       → Fallback for unknown actions (cached)
-```
-
-During planning, GATS queries L1 → L2 → L3 in order. The LLM is only called for genuinely unknown actions, then cached for reuse.
+| Benchmark                          | GATS *b*=20 | LATS *b*=20 | ReAct  |
+| ---------------------------------- | ----------: | ----------: | -----: |
+| 100 synthetic multi-step tasks     |    **100%** |        92 % |   64 % |
+| 12-category stress test (120 tasks)|    **100%** |      88.9 % | 23.9 % |
+| LLM calls per task (planning)      |       **0** |          37 |     13 |
 
 ---
 
-## Installation
+## Reproduce everything with one command
 
 ```bash
-git clone https://github.com/yourusername/gats.git
+git clone https://github.com/MMWilliams/gats
 cd gats
 pip install -r requirements.txt
+python reproduce.py
 ```
 
-### Requirements
+Total wall time: **~2 minutes** on a laptop. No GPU. No API keys.
+The pipeline is fully deterministic — every random number is seeded.
 
-- Python 3.10+
-- numpy
-- requests
+### What you get
 
----
+After `reproduce.py` finishes, `results/` contains:
 
-## Results Summary
+```
+results/
+├── main_eval.json         raw output of the main evaluation (Tables 1, 2, 3, 5)
+├── stress_test.json       raw output of the 12-category stress test (Table 6)
+├── sensitivity.json       hyperparameter sensitivity (Table 7)
+├── summary.csv            tidy-format aggregate for downstream tooling
+├── tables.tex             booktabs LaTeX of the main tables
+└── figures/
+    ├── fig1_main_results.{pdf,png}      Success rate per method (Table 1)
+    ├── fig2_budget_ablation.{pdf,png}   GATS scaling vs search budget (Table 2)
+    ├── fig3_llm_calls.{pdf,png}         Cost-vs-performance Pareto plot
+    ├── fig4_stress_test.{pdf,png}       Per-category heatmap (Table 6)
+    └── fig5_world_model.{pdf,png}       Layered world-model ablation (Table 3)
+```
 
-### Main Evaluation (100 Synthetic Tasks)
-
-| Method | Success Rate | Optimality | Avg Cost | Nodes |
-|--------|-------------|------------|----------|-------|
-| **GATS b=10** | **100.0%** | 1.00 | 4.2 | 167 |
-| **GATS b=20** | **100.0%** | 1.00 | 4.2 | 334 |
-| LATS b=10 | 92.0% | 0.99 | 4.0 | 37 |
-| LATS b=5 | 70.7% | 0.99 | 3.8 | 17 |
-| ReAct | 64.0% | 0.54 | 12.8 | 13 |
-| Greedy (Oracle) | 100.0% | 1.00 | 4.2 | 17 |
-
-### World Model Ablations
-
-| Method | Success Rate | Description |
-|--------|-------------|-------------|
-| GATS b=10 | 100.0% | Full model (L1 + L2 + L3) |
-| GATS no_l1 | 100.0% | Without symbolic layer |
-| GATS no_l3 | 100.0% | Without LLM fallback |
-| GATS b=5 | 84.0% | Reduced search budget |
-| GATS b=1 | 0.0% | Minimal budget (greedy) |
-
-### Budget Scaling
-
-| Budget | GATS SR | LATS SR | Δ |
-|--------|---------|---------|---|
-| b=1 | 0.0% | — | — |
-| b=5 | 84.0% | 70.7% | +13.3% |
-| b=10 | 100.0% | 92.0% | +8.0% |
-| b=20 | 100.0% | — | — |
-
-### API-Bank Benchmark
-
-| Level | GATS | LATS | ReAct | Description |
-|-------|------|------|-------|-------------|
-| L1 | 100.0% | 100.0% | 100.0% | Single API selection |
-| L2 | 100.0% | 100.0% | 100.0% | Multi-API selection |
-| L3 | 100.0% | 100.0% | 100.0% | Multi-step (constructed) |
-
-*Note: API-Bank tests single-step API selection, so all methods achieve 100%.*
-
-### Stress Test (12 Categories, 120 Tasks)
-
-| Category | GATS b=20 | LATS b=20 | ReAct | Δ (GATS-LATS) |
-|----------|-----------|-----------|-------|---------------|
-| coding_task | 100.0% | 63.3% | 0.0% | **+36.7%** |
-| deep_horizon | 100.0% | 63.3% | 0.0% | **+36.7%** |
-| web_navigation | 100.0% | 63.3% | 0.0% | **+36.7%** |
-| resource_puzzle | 100.0% | 86.7% | 16.7% | **+13.3%** |
-| trap_heavy | 100.0% | 96.7% | 16.7% | +3.3% |
-| commitment_cascade | 100.0% | 96.7% | 66.7% | +3.3% |
-| memory_limit | 100.0% | 96.7% | 20.0% | +3.3% |
-| critical_choice | 100.0% | 100.0% | 63.3% | 0.0% |
-| deceptive | 100.0% | 100.0% | 63.3% | 0.0% |
-| high_branching | 100.0% | 100.0% | 36.7% | 0.0% |
-| no_backtrack | 100.0% | 100.0% | 0.0% | 0.0% |
-| very_long_horizon | 100.0% | 100.0% | 3.3% | 0.0% |
-| **Overall** | **100.0%** | **88.9%** | **23.9%** | **+11.1%** |
-
----
-
-## Reproduce Results
-
-### 1. Main Evaluation + Ablations
+### Useful flags
 
 ```bash
-python run_ablation_study.py
+python reproduce.py --quick      # ~10s smoke test (smaller seeds/tasks)
+python reproduce.py --only stress   # run just the stress test
+python reproduce.py --no-figs    # data only, no plots
+python figures.py                # re-render figures from existing JSON
 ```
 
-**Output:**
-```
-Method                  Success Optimality   Avg Cost
-──────────────────────────────────────────────────────
-greedy                  100.0%       1.00        4.2
-gats_b10                100.0%       1.00        4.2
-gats_b20                100.0%       1.00        4.2
-gats_no_l1              100.0%       1.00        4.2
-gats_no_l3              100.0%       1.00        4.2
-lats_b10                 92.0%       0.99        4.0
-react                    64.0%       0.54       12.8
-```
-
-### 2. API-Bank Evaluation
+To replicate the LLM-backed runs from the paper (Llama 3.2 via Ollama):
 
 ```bash
-python download_api_bank.py
-python run_gats_eval_full.py --n-tasks 150 --quick
-```
-
-### 3. Stress Test
-
-```bash
-python run_stress_test.py --n-per-category 10 --seeds 42 123 456
-```
-
-**Output:**
-```
-GATS b=20:  100.0% overall
-LATS b=20:   88.9% overall
-ReAct:       23.9% overall
-```
-
-### 4. Quick Validation (~2 min)
-
-```bash
-python run_stress_test.py --quick
-```
-
-### 5. Full Reproduction (Windows)
-
-```bash
-python scripts/reproduce.py
-```
-
-Or run each step manually:
-```bash
-python download_api_bank.py
-python download_level3.py
-python run_ablation_study.py
-python run_stress_test.py --n-per-category 10 --seeds 42 123 456
+pip install requests
+ollama serve            # in a separate shell
+python experiments/run_gats_eval.py --backend ollama --n-tasks 100 \
+    --seeds 42 123 456 789 1000
 ```
 
 ---
 
-## Project Structure
+## Repository structure
 
 ```
-gats2/
-│
-├── gats/                        # Core GATS implementation
-│   ├── __init__.py
-│   ├── agent.py                 # GATS planning agent
-│   ├── core.py                  # State, Action, Plan primitives
-│   ├── search.py                # UCB1 tree search algorithm
-│   ├── world_model.py           # L1/L2/L3 layered world model
-│   ├── verifier.py              # Formal plan verification
-│   ├── calibration.py           # Confidence calibration
-│   ├── llm.py                   # LLM interface (L3 layer)
-│   └── event_log.py             # Execution logging
-│
-├── agents/                      # Baseline agents
-│   └── tot.py                   # Tree of Thoughts baseline
-│
-├── bench/                       # Benchmarks
-│   ├── __init__.py
-│   ├── tasks.py                 # Synthetic task generation
-│   ├── api_bank.py              # API-Bank loader
-│   ├── api_bank_real.py         # Real API-Bank evaluation
-│   ├── toolbench.py             # ToolBench loader
-│   └── toolbench_real.py        # Real ToolBench evaluation
-│
-├── analysis/                    # Analysis tools
-│   └── statistics.py            # Statistical analysis
-│
-├── scripts/                     # Automation scripts
-│   ├── reproduce.py             # Full reproduction (cross-platform)
-│   ├── download_datasets.py     # Download benchmarks
-│   ├── run_ablations.py         # Ablation studies
-│   ├── run_llm_experiments.py   # LLM-based experiments
-│   ├── test_pipeline.py         # CI/CD tests
-│   ├── api_bank_real.py         # API-Bank real evaluation
-│   └── toolbench_real.py        # ToolBench real evaluation
-│
-├── run_gats_eval.py             # Basic GATS evaluation
-├── run_gats_eval_full.py        # Full evaluation (synthetic + API-Bank)
-├── run_stress_test.py           # Stress test (12 categories)
-├── run_ablation_study.py        # Ablation studies
-├── run_experiment.py            # General experiment runner
-├── run_external.py              # External benchmark runner
-│
-├── download_api_bank.py         # Download API-Bank data
-├── download_level3.py           # Generate Level 3 multi-step tasks
-│
-├── test.py                      # Unit tests
-├── test_modules.py              # Module tests
-│
-├── results/                     # Output directory
-│   ├── gats_eval.json           # Main evaluation results
-│   ├── stress_test.json         # Stress test results
-│   └── tables.tex               # LaTeX tables
-│
+gats/
+├── reproduce.py            single entry point — runs every experiment + figures
+├── figures.py              renders publication-quality PDF/PNG plots
+├── experiments/
+│   ├── run_gats_eval.py    main evaluation + ablations (Tables 1, 2, 3, 5)
+│   └── run_stress_test.py  12-category stress test (Table 6)
+├── tests/
+│   └── test_reproducibility.py   pytest smoke tests for the pipeline
+├── paper/
+│   ├── main.tex
+│   ├── references.bib
+│   └── gats_preprint.pdf
 ├── requirements.txt
-├── README.md
-└── gats_paper.pdf               # Full paper (12 pages)
+└── pyproject.toml
 ```
 
----
-
-## Stress Test Categories
-
-| Category | Steps | Description |
-|----------|-------|-------------|
-| coding_task | 11 | Script/API/pipeline development |
-| web_navigation | 10-13 | Email, flight, hotel booking |
-| deep_horizon | 8-12 | Long paths with shortcut traps |
-| critical_choice | 8 | Memory allocation (wrong = stuck) |
-| no_backtrack | 8-12 | Maze with locking doors |
-| high_branching | 4 | 4-6 choices per step |
-| resource_puzzle | 7 | Limited resources, correct order |
-| trap_heavy | 5 | 3-7 attractive dead-ends |
-| deceptive | 5 | Quick-gains path is a trap |
-| memory_limit | 7 | Tool sequencing |
-| very_long_horizon | 12-15 | Extended task with periodic traps |
-| commitment_cascade | 4 | Early choices lock future options |
+That's the whole thing. Both `run_gats_eval.py` and `run_stress_test.py` are
+self-contained — they don't depend on a separate `gats/` library — so there
+is no install step beyond `pip install -r requirements.txt` and no hidden
+state.
 
 ---
 
-## Key Findings
+## How GATS works (one paragraph)
 
-### GATS vs LATS
-- **+8% on synthetic tasks** (100% vs 92%)
-- **+11% on stress test** (100% vs 88.9%)
-- **Zero LLM calls** vs ~60 for LATS
-- **Deterministic** (0% variance) vs 2% for LATS
+At each planning step, GATS runs a budgeted UCB1 tree search over the
+applicable actions. For every candidate next state, the **layered world
+model** predicts the effect:
 
-### GATS vs ReAct
-- **+36% on synthetic tasks** (100% vs 64%)
-- **+76% on stress test** (100% vs 23.9%)
+- **L1 (Symbolic)** — exact precondition/effect matching when the action is
+  known. Returns the next state deterministically with confidence 1.0.
+- **L2 (Learned)** — statistical effect prediction from execution-log
+  counts, returning the most-frequent observed effect.
+- **L3 (LLM)** — fallback for novel actions, called once and cached.
 
-### When Methods Are Equal
-- API-Bank L1/L2/L3: Single-step tasks (all 100%)
-- Simple tasks with no dead-ends
-
-### When GATS Excels
-- Long horizon (10+ steps)
-- High branching (many choices)
-- Dead-ends (irreversible mistakes)
-- Resource constraints
+States are scored by a BFS reachability heuristic (admissible — no LLM
+calls). On benchmarks where L1 has full coverage, L3 is never invoked at
+planning time. See §3 of the paper for the full algorithm.
 
 ---
 
@@ -272,18 +118,16 @@ gats2/
 
 ```bibtex
 @article{williams2026gats,
-  title={GATS: Graph-Augmented Tree Search with Layered World Models 
-         for Efficient Agent Planning},
-  author={Williams, Maureese},
-  year={2026}
+  title  = {GATS: Graph-Augmented Tree Search with Layered World Models
+            for Efficient Agent Planning},
+  author = {Williams, Maureese},
+  year   = {2026},
+  eprint = {arXiv:2601.XXXXX}
 }
 ```
 
+---
+
 ## License
 
-MIT License
-
-## Author
-
-**Maureese Williams**  
-maureesewilliams@gmail.com
+MIT — see [pyproject.toml](pyproject.toml).

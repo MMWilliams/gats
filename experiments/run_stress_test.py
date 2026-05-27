@@ -1042,7 +1042,7 @@ def run_stress_test(tasks: List[StressTask], seeds: List[int], budgets: List[int
     current_eval = 0
     start_time = time.perf_counter()
     
-    print(f"\nTotal evaluations: {total_evals} ({len(seeds)} seeds × {len(tasks)} tasks × {n_methods} methods)")
+    print(f"\nTotal evaluations: {total_evals} ({len(seeds)} seeds x {len(tasks)} tasks x {n_methods} methods)")
     print(f"Estimated time: {total_evals * 0.05:.0f}-{total_evals * 0.2:.0f} seconds\n")
     
     for seed_idx, seed in enumerate(seeds):
@@ -1206,7 +1206,7 @@ def print_gats_advantage(results: Dict, categories: List[str]):
     if gats_wins:
         print(f"\n  GATS WINS ({len(gats_wins)} categories):")
         for cat, gats_sr, lats_sr, diff in sorted(gats_wins, key=lambda x: -x[3]):
-            print(f"    {cat:<22}: GATS={gats_sr:>5.1%}, LATS={lats_sr:>5.1%}, Δ={diff*100:>+5.1f}%")
+            print(f"    {cat:<22}: GATS={gats_sr:>5.1%}, LATS={lats_sr:>5.1%}, delta={diff*100:>+5.1f}%")
     
     if ties:
         print(f"\n  TIES ({len(ties)} categories):")
@@ -1216,7 +1216,7 @@ def print_gats_advantage(results: Dict, categories: List[str]):
     if lats_wins:
         print(f"\n  LATS WINS ({len(lats_wins)} categories):")
         for cat, gats_sr, lats_sr, diff in sorted(lats_wins, key=lambda x: x[3]):
-            print(f"    {cat:<22}: GATS={gats_sr:>5.1%}, LATS={lats_sr:>5.1%}, Δ={diff*100:>+5.1f}%")
+            print(f"    {cat:<22}: GATS={gats_sr:>5.1%}, LATS={lats_sr:>5.1%}, delta={diff*100:>+5.1f}%")
     
     # Highlight key strengths
     print(f"\n{'='*60}")

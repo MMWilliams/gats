@@ -919,11 +919,11 @@ def main():
     print(f"ReAct:   {react:.1%} SR, {avg_opt('react'):.2f} optimality")
     
     if gats > greedy:
-        print(f"\n✓ GATS > Greedy: +{gats-greedy:.1%}")
+        print(f"\n[+] GATS > Greedy: +{gats-greedy:.1%}")
     if gats > react:
-        print(f"✓ GATS > ReAct: +{gats-react:.1%}")
+        print(f"[+] GATS > ReAct: +{gats-react:.1%}")
     if lats and gats >= lats:
-        print(f"✓ GATS >= LATS with fewer LLM calls")
+        print(f"[+] GATS >= LATS with fewer LLM calls")
 
 if __name__ == "__main__":
     main()
