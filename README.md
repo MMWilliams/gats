@@ -11,11 +11,11 @@ LATS and ReAct.
 
 ## Headline results (from `python reproduce.py`)
 
-| Benchmark                          | GATS *b*=20 | LATS *b*=20 | ReAct  |
-| ---------------------------------- | ----------: | ----------: | -----: |
-| 100 synthetic multi-step tasks     |    **100%** |        92 % |   64 % |
-| 12-category stress test (120 tasks)|    **100%** |      88.9 % | 23.9 % |
-| LLM calls per task (planning)      |       **0** |          37 |     13 |
+| Benchmark                           | GATS *b*=10 | LATS *b*=10 | ReAct |
+| ------------------------------------ | ----------: | ----------: | ----: |
+| 100 synthetic multi-step tasks       |    **100%** |       87.4% | 51.6% |
+| 12-category stress test (120 tasks)  |    **100%** |       88.9% | 23.9% |
+| LLM calls per task (planning)        |       **0** |        46.2 |  16.2 |
 
 ---
 
@@ -120,9 +120,9 @@ planning time. See §3 of the paper for the full algorithm.
 @article{williams2026gats,
   title  = {GATS: Graph-Augmented Tree Search with Layered World Models
             for Efficient Agent Planning},
-  author = {Williams, Maureese},
+  author = {Williams, Maureese and Nowicki, Dymitr},
   year   = {2026},
-  eprint = {arXiv:2601.XXXXX}
+  eprint = {arXiv:2607.08894}
 }
 ```
 
