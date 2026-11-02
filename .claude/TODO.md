@@ -1,10 +1,10 @@
 # GATS research backlog
 
-- Long-horizon program run (reese 11-02): 95 months x 2 cases launched as
-  scheduled task `GATS-Program` into `C:\Users\reese\gats-program`; when it
+- Long-horizon program run (reese 11-02): 95 months x 2 cases started 13:52 UTC
+  as a detached process (`C:\Users\reese\gats-program\run.cmd`); when it
   finishes, read `report.json`, record the learning curve and the month timing
-  in `integrations/PROGRAM_RUN.md`, and delete the task
-  (`schtasks /delete /tn GATS-Program /f`). See `.claude/HANDOFF.md`.
+  in `integrations/PROGRAM_RUN.md`. If it died with the session, rerun run.cmd
+  (resumes). See `.claude/HANDOFF.md`.
 - Program design follow-ups: months are structurally identical, so the monthly
   plan is the same ordering problem; add month-to-month variation (volume,
   capacity tokens such as limited legal or CFO slots) and real top-level drift.

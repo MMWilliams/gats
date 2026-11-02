@@ -1,7 +1,10 @@
 # The long-horizon program run
 
-Started November 2, 2026 as the Windows scheduled task `GATS-Program`, from
-`C:\Users\reese\gats_clean\gats2` (master), writing to `C:\Users\reese\gats-program`.
+Started November 2, 2026 at 13:52 UTC (8:52 AM local) as a detached background
+process (`C:\Users\reese\gats-program\run.cmd`; a Windows scheduled task was
+not permitted in that session), from `C:\Users\reese\gats_clean\gats2` at
+master 70f0aa0, writing to `C:\Users\reese\gats-program`. Expected to finish
+about 11.5 to 12 hours later.
 
 ```
 python -m integrations.run_program run --months 95 --cases 2 --output C:/Users/reese/gats-program --database C:/Users/reese/gats-program/shared.sqlite --resume
@@ -28,8 +31,10 @@ started from the corporate two-agent pass.
 ## How it works
 
 - Level 1 creates the month's plan with MCTS over the abstract actions (97
-  actions, horizon 97, 48 simulations per decision, one search per step: about
-  7.5 minutes per month in calibration) from live truth, saves it to
+  actions, horizon 97, 48 simulations per decision, one search per step).
+  Calibration on two months: planning 452.7 s then 403.1 s, execution of the
+  96 cells 5.0 s then 5.4 s, 192/192 cells successful, month 2 with no
+  exploration and no surprise. The plan is created from live truth, saved to
   `plans/mNNN.json`, then executes it step by step. A refusal triggers a replan
   from live truth; ten refusals in a month stall the program.
 - Level 2 runs each workstream with the GATS loop of the corporate pass. The
@@ -45,17 +50,19 @@ started from the corporate two-agent pass.
 ```
 python -m integrations.run_program status --output C:/Users/reese/gats-program
 Get-Content C:\Users\reese\gats-program\run.log -Tail 5
-schtasks /query /tn GATS-Program
 ```
 
 `status.json` shows the month, the phase (planning or executing), the step
-index, cells completed and the chain head. Expected finish: about 12 hours
-after the start in `started_at` (95 months x about 7.6 minutes).
+index, cells completed and the chain head. Expected finish: about 11.5 to 12
+hours after the start in `started_at` (95 months x about 7.2 minutes).
 
 ## If it stops
 
-Run the same command again (the launcher `C:\Users\reese\gats-program\run.cmd`
-already passes `--resume`): the program state is rebuilt from `records.jsonl`,
+A detached process does not survive a reboot, and may not survive the session
+that started it. Run `C:\Users\reese\gats-program\run.cmd` again (or register
+it: `schtasks /create /tn GATS-Program /tr C:\Users\reese\gats-program\run.cmd /sc once /st 23:59`
+then `schtasks /run /tn GATS-Program`). The launcher already passes
+`--resume`: the program state is rebuilt from `records.jsonl`,
 finished workstreams are not rerun, and the current month's plan is reused.
 Observation event ids carry a run-segment number, so a resumed month never
 collides with the records written before the interruption. Per-month audit

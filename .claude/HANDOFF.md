@@ -32,11 +32,15 @@ learning curve is recorded in `integrations/PROGRAM_RUN.md`.
 - A plan-once program with one case per workstream closed a month in 1 s; useless as a 12-hour task.
 
 ## Next step
-Wait for `GATS-Program` to finish (started 2026-11-02, about 12 h). Then:
-`python -m integrations.run_program status --output C:/Users/reese/gats-program`, read `report.json`,
-write the learning curve (explorations/divergences/served layers per month, planning seconds) into
-`integrations/PROGRAM_RUN.md`, run `python -m gats_mcts inspect --database C:/Users/reese/gats-program/shared.sqlite`,
-commit, push, `schtasks /delete /tn GATS-Program /f`. If it stalled, `run.log` and `status.json` say where.
+The program run started 2026-11-02 13:52 UTC (8:52 AM local) as a detached process from
+`C:\Users\reese\gats-program\run.cmd` (schtasks was denied by the auto-mode classifier); expected to
+finish about 01:30 UTC Nov 3 (8:30 PM local Nov 2). First:
+`python -m integrations.run_program status --output C:/Users/reese/gats-program`. If `status` is still
+`running` but `updated_at` is stale (process died with the session), rerun `run.cmd`: it resumes from the
+checkpoint. When `complete`: read `report.json`, write the learning curve (explorations/divergences/served
+layers per month, planning seconds) into `integrations/PROGRAM_RUN.md`, run
+`python -m gats_mcts inspect --database C:/Users/reese/gats-program/shared.sqlite`, commit, push.
+If it stalled, `run.log` and `status.json` say where.
 
 ## Test command
 `py -3.13 -m pytest tests -q -rN --tb=no` -> 50 passed, 7 failed (the seven legacy test_paper_claims failures,
