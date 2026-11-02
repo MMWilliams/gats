@@ -6,6 +6,49 @@ full Monte Carlo tree search. The frozen v2.1/v2.2 research sources and their
 tables are preserved. Current paper:
 `C:/Users/reese/gats-submissions/jair/gats_v2_2_2026_09_17.pdf`.
 
+## November 2, 2026: hardening, a graph several agents share, fifty corporate tasks
+
+- **Truth first.** An observation that changes facts outside an action's declared
+  write footprint is kept as evidence; the footprint loses trust instead
+  (projected transfer is switched off for that action, listed under
+  `footprint_violations`). Before, the model raised and an agent rejected its
+  own sensor reading on the first undocumented side effect.
+- **Repaired contracts, layer `L1r`.** When a contract is contradicted or
+  missing, and at least `min_support` observations in at least two distinct
+  states agree on one STRIPS delta, the model predicts that delta in states that
+  contain every fact common to the observed pre-states (an add that was always
+  already present, or a condition that was always true, is invisible in deltas,
+  so the schema is unproven without those facts). Facts never observed are
+  assumed inert. One conflicting observation withdraws the repair. Predictions
+  carry support and a Wilson bound. Model policy version is now 2; a graph
+  written under version 1 is refused rather than reinterpreted.
+- **One graph, several agents.** Files open in WAL mode with a busy timeout.
+  `LayeredWorldModel.from_graph(graph, namespace)` rebuilds another agent's
+  model from the stored catalog (L1) and all evidence (L2). `sync()` learns the
+  rows other writers appended; the runtime calls it before every search.
+- **The GATS loop in the runtime.** `AuditedRuntime.run()` searches one action
+  from live truth, executes it under the same precondition and human-gate
+  checks as before, observes, and searches again. `SearchResult.goal_hits`
+  counts simulations that reached the goal; when it is zero the runtime heads
+  for the nearest applicable tool the model cannot predict (those steps are
+  recorded with basis `exploration`) or stops with `no_modeled_path` instead
+  of executing hopeless actions. Observation event ids are
+  `<agent>/<task>/<seq>` so agents never collide in a shared namespace.
+- **Fifty corporate tasks** (`integrations/corporate_tasks.py`): finance, HR,
+  legal, compliance, IT, security, sales, marketing, operations. About half
+  drift from their published contracts (undocumented side effects, silent
+  failures with a slower fallback, undocumented resets); two are unreachable.
+  `integrations/run_corporate.py` runs agent A cold, then agent B in a separate
+  process on the same graph, and compares. Results and caveats:
+  [integrations/CORPORATE_RESULTS.md](../integrations/CORPORATE_RESULTS.md).
+
+```powershell
+python -m integrations.run_corporate run --database results/corporate/shared.sqlite --agent A --cases c1 c2 --output results/corporate/A.json
+python -m integrations.run_corporate run --database results/corporate/shared.sqlite --agent B --cases c1 c3 --output results/corporate/B.json
+python -m integrations.run_corporate compare results/corporate/A.json results/corporate/B.json --output results/corporate/comparison.json
+python -m pytest tests/test_mcts_hardening.py tests/test_corporate.py -q
+```
+
 ## Run and inspect
 
 From `C:/Users/reese/gats_clean/gats2`, using Python 3.10 or later:

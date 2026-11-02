@@ -102,12 +102,14 @@ def test_invalid_logs_and_batch_conflicts_do_not_partially_populate():
     with pytest.raises(ValueError, match="conflicting"):
         model.ingest([good, wrong])
     assert model.coverage()["observations"] == 0
-    with pytest.raises(ValueError, match="footprint"):
-        model.observe({"ready"}, "send", {"done"}, event="bad", source="test")
     with pytest.raises(ValueError, match="preconditions"):
         model.observe(set(), "send", {"done"}, event="bad", source="test")
     assert model.ingest([good]) == 1
     assert model.ingest([good]) == 0
+    # Truth outside the declared footprint is kept; only the footprint loses trust.
+    assert model.observe({"ready"}, "send", {"done"}, event="drift", source="test")
+    assert model.coverage()["footprint_violations"] == ["send"]
+    assert model.coverage()["observations"] == 2
 
 
 @pytest.mark.parametrize("kwargs", [{"cost": 0}, {"cost": float("nan")}, {"context": set()},

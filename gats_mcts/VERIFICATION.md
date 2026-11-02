@@ -4,6 +4,29 @@ Working directory: `C:/Users/reese/gats_clean/gats2`. Python 3.13.5.
 This is a new development implementation. Frozen v2.1/v2.2 sources and result
 tables are historical evidence and must retain their bytes.
 
+## November 2, 2026: hardening, shared graph, fifty corporate tasks
+
+Run with `py -3.13` from the repository root. Branch `mcts-corporate`.
+
+| Requirement or material risk | Source | Runnable check | Explicit pass criterion | Result/evidence |
+| --- | --- | --- | --- | --- |
+| Integration planner is MCTS, not the UCB1 bandit | user request; Nov 1 record | 36 pre-change development tests; `grep -n UCB integrations/core.py gats_mcts/*.py` | baseline green; no UCB1 planner on the integration path | 36 passed before any edit; no matches |
+| L2 truth first: an observation outside a declared footprint is stored, projection for that action stops, coverage lists it | inferred: `_validate_observation` raised `ValueError` and the runtime would reject its own sensor reading | `py -3.13 -m pytest tests/test_mcts_hardening.py -q -k footprint` | passes; the old assertion `pytest.raises(ValueError, match="footprint")` documented the pre-change behavior and was replaced by the new requirement | passed |
+| L1 repair (`L1r`): one consistent delta across >= min_support observations in >= 2 distinct states predicts only in states holding every common pre-state fact; inconsistent evidence abstains; a conflict withdraws | user: harden L1; v2.2 aliasing risk | `py -3.13 -m pytest tests/test_mcts_hardening.py -q -k repair` and the two pre-existing projection tests | expected successors written by hand in the tests; the two older transfer tests still pass (they failed under an unguarded first draft, which is why the common-fact guard exists) | passed |
+| Shared graph: a second connection retrieves catalog and evidence, `sync()` sees another writer's rows, revisions agree, interleaved writers in two namespaces never collide | user: a world model a separate agent can use | `py -3.13 -m pytest tests/test_mcts_hardening.py -q -k shared` | passes; both connections export identical graphs | passed |
+| Graph integrity after two agents wrote 50 namespaces | existing `validate()` contract | `py -3.13 -m gats_mcts inspect --database results/corporate/shared.sqlite` | no integrity errors, exit 0 | 50 catalogs, 2,563 states, 1,280 observations, 3,859 predictions, `integrity_errors: []` |
+| Fifty distinct corporate tasks whose goals are reachable under the REAL effects (independent BFS, not the planner); the two unreachable ones are marked | user request | `py -3.13 -m pytest tests/test_corporate.py -q -k catalog` | 50 unique ids and titles, >= 8 departments, >= 20 drifted, exactly 2 unreachable | passed |
+| Pass 1 (agent A) then pass 2 (agent B, separate OS process, same file): B loads L1 and L2 from the graph, is never surprised where A has evidence, explores nothing, succeeds at least as often, executes no more on shared cases, and never executes an unreachable task | user: preserve in L1 and L2, retrieve for a second pass | the three `run_corporate` commands in README; `py -3.13 -m pytest tests/test_corporate.py -q -k processes` | all comparison checks true | A: 96/100 cells succeed (the 4 failures are the two unreachable tasks), 649 executions, 77 exploration steps, 25 surprises. B: 96/100, 631 executions, 0 exploration, 1 surprise (t22 `suspend_retention`, a tool A never ran), 1,548 L2 and 1,276 L1r predictions served, 0 executions on unreachable tasks. All 9 checks true; the subprocess test passes |
+| Existing gates | repository | `py -3.13 -m integrations.run_deep`; `py -3.13 -m pytest tests -q` | ALL LAYERS PASSED; no new failures | deep lab passed in 110.9 s (tamper battery now 4,248 mutations because execution records carry `basis`). Full suite: the same seven legacy `test_paper_claims.py` failures as the Nov 1 baseline, nothing else fails. `numpy`, `matplotlib`, `requests`, `pytest` were installed into the 3.13 interpreter to run the legacy tests at all |
+| Determinism | repository contract | agent A twice into fresh graphs | identical outcome digests | both `6fa45220e348111837d72b9c5b3dc387317501c9cd03e44ddba7952acfe20644` |
+
+Not covered: real production telemetry, stochastic drift, human approvals that
+are not simulated, graphs written concurrently by more than one process at the
+same instant (the WAL and busy-timeout path is exercised by two connections in
+one process and by sequential processes).
+
+## November 1, 2026 development
+
 | Requirement or material risk | Source | Runnable check | Explicit pass criterion | Result/evidence |
 | --- | --- | --- | --- | --- |
 | Full MCTS, bounded search, multi-step return and cost handling | User request; Browne et al. 2012 MCTS phases | `python -m pytest tests/test_mcts_search.py -q` | Delayed reward, trap, cost, cycle, stochastic-outcome, depth and query-budget cases pass; no environment import or execution in planner | Passed in final 36-test development suite; AST boundary check included |

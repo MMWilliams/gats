@@ -1,12 +1,26 @@
-"""L1 contracts and L2 observed outcome distributions, without an execution oracle."""
+"""L1 contracts, contracts repaired from evidence, and L2 observed outcome
+distributions, without an execution oracle. Several agents may share one graph."""
 from __future__ import annotations
 
 import math
 from collections import Counter, defaultdict
 from types import MappingProxyType
+from typing import NamedTuple
 
-from .domain import Action, Contract, Outcome, Prediction, catalog_data, facts
+from .domain import (Action, Contract, Effect, Outcome, Prediction, catalog_data, facts,
+                     read_catalog)
 from .graph import TransitionGraph
+
+# 1: strict footprints, no repair, single writer. 2: truth-first footprints,
+# L1r repaired contracts, multi-writer sync. A graph written under another
+# version is not reinterpreted.
+MODEL_VERSION = 2
+
+
+class Repair(NamedTuple):
+    """A contract induced from evidence and the pre-state facts it is proven for."""
+    contract: Contract
+    common: frozenset
 
 
 def wilson_lower(successes, total):
@@ -45,36 +59,64 @@ class LayeredWorldModel:
         self.graph = graph if graph is not None else TransitionGraph()
         self.namespace = namespace
         catalog = catalog_data(self.actions, contracts)
-        catalog["model"] = {"version": 1, "min_support": min_support}
+        catalog["model"] = {"version": MODEL_VERSION, "min_support": min_support}
         self.graph.register(namespace, catalog)
         self.exact = defaultdict(Counter)
         self.projected = defaultdict(Counter)
+        self.history = defaultdict(list)
         self.additions = defaultdict(set)
         self.quarantined = set()
+        self.footprint_violations = set()
+        self.repairs = {}
         self.revisions = Counter()
         self.usage = Counter()
         self.cache = {}
-        for row in self.graph.observations(namespace):
+        self._cursor = 0
+        self.sync()
+
+    @classmethod
+    def from_graph(cls, graph, namespace):
+        """Rebuild the model another agent registered: its L1 catalog plus all evidence."""
+        catalog = graph.catalog(namespace)
+        if catalog is None:
+            raise ValueError("namespace not found in graph: " + namespace)
+        policy = catalog.get("model", {})
+        if policy.get("version") != MODEL_VERSION:
+            raise ValueError("graph namespace was written under a different model policy version")
+        actions, contracts = read_catalog(catalog)
+        return cls(actions, contracts, graph=graph, namespace=namespace,
+                   min_support=policy["min_support"])
+
+    def sync(self):
+        """Learn evidence any writer appended since the last sync; returns the row count."""
+        rows = self.graph.observations_since(self.namespace, self._cursor)
+        for row in rows:
             before, after = facts(row["before"]), facts(row["after"])
             self._validate_observation(before, row["action"], after)
             self._learn(before, row["action"], after)
+            self._cursor = row["rowid"]
+        return len(rows)
 
     def _validate_observation(self, before, name, after):
-        action = self.by_name[name]
-        if not action.applicable(before):
+        if not self.by_name[name].applicable(before):
             raise ValueError("observation violates action preconditions")
-        if action.writes is not None and not (before ^ after) <= action.writes:
-            raise ValueError("observation changes facts outside the write footprint")
 
     def _learn(self, before, name, after):
         action = self.by_name[name]
         self.exact[(before, name)][after] += 1
-        if action.context is not None:
+        self.history[name].append((before, after))
+        if (action.writes is not None and name not in self.footprint_violations
+                and not (before ^ after) <= action.writes):
+            # Truth outranks the declaration: keep the evidence, stop trusting the footprint.
+            self.footprint_violations.add(name)
+            self.projected = defaultdict(Counter, {k: v for k, v in self.projected.items() if k[1] != name})
+        if action.context is not None and name not in self.footprint_violations:
             self.projected[(action.evidence_key(before), name)][after & action.writes] += 1
         self.additions[name].update(after - before)
         contract = self.contracts.get(name)
         if contract is not None and contract.apply(before) != after:
             self.quarantined.add(name)
+        self.repairs.pop(name, None)
         self.revisions[name] += 1
         self.cache = {k: v for k, v in self.cache.items() if k[1] != name}
 
@@ -82,8 +124,7 @@ class LayeredWorldModel:
         before, after = facts(before), facts(after)
         self._validate_observation(before, name, after)
         added = self.graph.observe(self.namespace, event, before, name, after, source)
-        if added:
-            self._learn(before, name, after)
+        self.sync()
         return added
 
     def ingest(self, rows):
@@ -108,6 +149,28 @@ class LayeredWorldModel:
     def applicable(self, state):
         return [a for a in self.actions if a.applicable(state)]
 
+    def repaired(self, name):
+        """One STRIPS delta consistent with every observation of the action, with the
+        facts common to all observed pre-states; or None.
+
+        Needs min_support observations in at least two distinct states, so a delta
+        seen in one context is never promoted to a schema. The repair is applied
+        only to states containing every common fact: an add that was always already
+        present, or a condition that was always true, is invisible in the deltas, so
+        the schema is unproven where those facts are missing. Facts never observed
+        are assumed inert. Any later observation that breaks the delta withdraws it.
+        """
+        if name not in self.repairs:
+            rows = self.history[name]
+            repair = None
+            if len(rows) >= self.min_support and len({b for b, _ in rows}) >= 2:
+                add = frozenset().union(*(a - b for b, a in rows))
+                delete = frozenset().union(*(b - a for b, a in rows))
+                if all((b - delete) | add == a for b, a in rows):
+                    repair = Repair(Contract(Effect(add, delete)), frozenset.intersection(*(b for b, _ in rows)))
+            self.repairs[name] = repair
+        return self.repairs[name]
+
     def predict(self, state, name):
         state = facts(state)
         action = self.by_name[name]
@@ -129,7 +192,7 @@ class LayeredWorldModel:
         # transfer requires min_support; an exact observation is never disguised as
         # statistically well-established knowledge (support and Wilson bound travel).
         counts = self.exact.get(key)
-        if action.context is not None:
+        if action.context is not None and name not in self.footprint_violations:
             projected = self.projected.get((action.evidence_key(state), name))
             if projected and sum(projected.values()) >= self.min_support:
                 counts = Counter({(state - action.writes) | post: n for post, n in projected.items()})
@@ -139,6 +202,10 @@ class LayeredWorldModel:
             prediction = Prediction(outcomes, "L2", total, wilson_lower(max(counts.values()), total))
         elif name in self.contracts and name not in self.quarantined:
             prediction = Prediction((Outcome(self.contracts[name].apply(state), 1.0),), "L1")
+        elif (repair := self.repaired(name)) is not None and repair.common <= state:
+            support = len(self.history[name])
+            prediction = Prediction((Outcome(repair.contract.apply(state), 1.0),), "L1r",
+                                    support, wilson_lower(support, support))
         else:
             self.usage["unmodeled"] += 1
             return None
@@ -162,9 +229,13 @@ class LayeredWorldModel:
 
     def coverage(self):
         observed = {name for _, name in self.exact}
+        trusted = set(self.contracts) - self.quarantined
         return {"actions": len(self.actions), "l1_contracts": len(self.contracts),
-                "quarantined": sorted(self.quarantined), "observed_actions": len(observed),
-                "uncovered_actions": sorted(set(self.by_name) - (set(self.contracts) - self.quarantined) - observed),
+                "quarantined": sorted(self.quarantined),
+                "footprint_violations": sorted(self.footprint_violations),
+                "repaired": sorted(n for n in self.by_name if n not in trusted and self.repaired(n) is not None),
+                "observed_actions": len(observed),
+                "uncovered_actions": sorted(set(self.by_name) - trusted - observed),
                 "exact_state_action_pairs": len(self.exact),
                 "projected_contexts": len(self.projected),
                 "observations": sum(self.revisions.values())}

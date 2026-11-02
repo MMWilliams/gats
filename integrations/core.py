@@ -26,12 +26,15 @@ import copy
 import hashlib
 import importlib.util
 import json
+from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 
 from gats_mcts import (Action as ModelAction, Contract, Effect,
                        LayeredWorldModel, MCTSPlanner)
+from gats_mcts.domain import catalog_data
+from gats_mcts.heuristic import AdditiveHeuristic
 
 # --- load the real demo engine (single source of truth for the planner) ----
 _DEMOS = Path(__file__).resolve().parent.parent / "demos"
@@ -59,9 +62,10 @@ class ToolError(Exception):
 @dataclass
 class Tool:
     """A tool in the company's own stack. `effects_add`/`effects_del` are the
-    PUBLISHED contract. `hidden_add` (undocumented side effects) and
-    `fails_to_add` (declared but not delivered) simulate contract drift in
-    the customer's real system; GATS never sees them."""
+    PUBLISHED contract. `hidden_add` (undocumented side effects),
+    `fails_to_add` (declared but not delivered) and `hidden_del` (undocumented
+    resets) simulate contract drift in the customer's real system; GATS never
+    sees them."""
     name: str
     preconditions: FrozenSet[str]
     effects_add: FrozenSet[str]
@@ -69,6 +73,7 @@ class Tool:
     risk: str = "low"
     hidden_add: FrozenSet[str] = frozenset()
     fails_to_add: FrozenSet[str] = frozenset()
+    hidden_del: FrozenSet[str] = frozenset()
 
 
 class CompanySystem:
@@ -99,7 +104,7 @@ class CompanySystem:
             raise ToolError(tool_name, frozenset(missing))
         before = frozenset(self._facts)
         self._facts |= (set(t.effects_add) - set(t.fails_to_add)) | set(t.hidden_add)
-        self._facts -= set(t.effects_del)
+        self._facts -= set(t.effects_del) | set(t.hidden_del)
         after = frozenset(self._facts)
         self.call_log.append(tool_name)
         return after - before, before - after
@@ -130,23 +135,44 @@ class AuditedRuntime:
     """GATS embedded under one company's stack, with a tamper-evident log."""
 
     def __init__(self, system: CompanySystem, goal: Set[str],
-                 budget: int = 24, max_steps: int = 40, horizon: int = 12):
+                 budget: int = 24, max_steps: int = 40, horizon: int = 12,
+                 graph=None, agent: str = "agent", task: Optional[str] = None):
         self.sys = system
         self.goal = frozenset(goal)
         self.actions = system.published_contract()
+        self.by_name = {a.name: a for a in self.actions}
         self.horizon = horizon
         self.budget = budget
         self.max_steps = max_steps
+        self.agent = agent
+        self.task = task or system.company_id
         self.records: List[dict] = []
         self.security_events: List[dict] = []
         self.drift_events: List[dict] = []
+        self.divergences = 0
+        self.divergent_actions: List[str] = []
+        self.explorations = 0
         self.status = "init"
         # No context/write completeness promise is available from these tool
         # APIs, so runtime observations use conservative exact-state L2 keys.
-        self.world_model = LayeredWorldModel(
-            [ModelAction(a.name, a.preconditions) for a in self.actions],
-            {a.name: Contract(Effect(a.effects_add, a.effects_del)) for a in self.actions},
-            namespace=system.company_id)
+        actions = [ModelAction(a.name, a.preconditions) for a in self.actions]
+        contracts = {a.name: Contract(Effect(a.effects_add, a.effects_del)) for a in self.actions}
+        self.retrieved = graph is not None and graph.catalog(system.company_id) is not None
+        if self.retrieved:
+            # Another agent registered this system: its L1 catalog and every
+            # execution it recorded come from the shared graph, not from here.
+            self.world_model = LayeredWorldModel.from_graph(graph, system.company_id)
+            stored = {k: v for k, v in graph.catalog(system.company_id).items() if k != "model"}
+            if stored != catalog_data(actions, contracts):
+                raise ValueError("published contract differs from the shared graph catalog; "
+                                 "register the changed API under a new namespace")
+        else:
+            self.world_model = LayeredWorldModel(actions, contracts, graph=graph,
+                                                 namespace=system.company_id)
+        # Published-contract guidance for exploration only; never a prediction.
+        self._published_distance = AdditiveHeuristic(
+            [(frozenset(a.preconditions), frozenset(a.effects_add), 1.0) for a in self.actions],
+            self.goal)
         self.search_results = []
 
     # -- audit chain --------------------------------------------------------
@@ -162,10 +188,13 @@ class AuditedRuntime:
         return self.records[-1]["record_hash"] if self.records else "GENESIS"
 
     # -- planning (zero LLM calls) ------------------------------------------
+    def _planner(self) -> MCTSPlanner:
+        return MCTSPlanner(self.world_model, simulations=self.budget,
+                           max_depth=max(self.horizon, self.max_steps), seed=0)
+
     def plan(self) -> Optional[List[str]]:
         """Produce a modeled plan without executing tools or creating evidence."""
-        planner = MCTSPlanner(self.world_model, simulations=self.budget,
-                              max_depth=max(self.horizon, self.max_steps), seed=0)
+        planner = self._planner()
         state, plan, seen = self.sys.observe(), [], set()
         self.search_results = []
         for _ in range(self.max_steps):
@@ -188,68 +217,140 @@ class AuditedRuntime:
     # -- execution with per-step ground-truth verification ------------------
     def execute(self, plan_names: List[str],
                 human_approver: Optional[Callable[[str], bool]] = None) -> bool:
-        by_name = {a.name: a for a in self.actions}
         for name in plan_names:
-            act = by_name[name]
-            truth = self.sys.observe()
-
-            # The security primitive: preconditions vs LIVE ground truth.
-            missing = frozenset(act.preconditions) - truth
-            if missing:
-                self._append({
-                    "type": "refusal", "action": name, "actor": "agent",
-                    "missing_preconditions": sorted(missing),
-                    "pre_state": state_hash(truth),
-                })
-                self.status = "halted_precondition_failed"
+            if not self._step(name, human_approver, "plan"):
                 return False
-
-            # FINRA-style human checkpoint: gated tools never auto-execute.
-            if name in self.sys.human_gated:
-                if human_approver is None or not human_approver(name):
-                    self._append({
-                        "type": "checkpoint_blocked", "action": name,
-                        "actor": "agent", "pre_state": state_hash(truth),
-                        "note": "human approval required and not granted",
-                    })
-                    self.status = "blocked_awaiting_human"
-                    return False
-                actor = "human"
-            else:
-                actor = "agent"
-
-            added, removed = self.sys.call(name)
-
-            # Contract-drift detection: observed delta vs published effects.
-            expected_add = frozenset(act.effects_add) - truth
-            unexpected_add = added - frozenset(act.effects_add)
-            missing_add = expected_add - added
-            unexpected_del = removed - frozenset(act.effects_del)
-            drift = {}
-            if unexpected_add:
-                drift["undocumented_side_effects"] = sorted(unexpected_add)
-            if missing_add:
-                drift["declared_effects_not_delivered"] = sorted(missing_add)
-            if unexpected_del:
-                drift["undocumented_deletions"] = sorted(unexpected_del)
-            if drift:
-                self.drift_events.append({"action": name, **drift})
-
-            self._append({
-                "type": "execution", "action": name, "actor": actor,
-                "preconditions": sorted(act.preconditions),
-                "pre_state": state_hash(truth),
-                "post_state": state_hash(self.sys.observe()),
-                "added": sorted(added), "removed": sorted(removed),
-                "drift": drift or None,
-            })
-            self.world_model.observe(truth, name, self.sys.observe(),
-                                     event=str(self.records[-1]["seq"]),
-                                     source="audited-execution:" + self.records[-1]["record_hash"])
-
         goal_ok = self.goal.issubset(self.sys.observe())
         self.status = "goal_reached" if goal_ok else "plan_exhausted"
         return goal_ok
+
+    def _step(self, name: str, human_approver, basis: str) -> bool:
+        act = self.by_name[name]
+        truth = self.sys.observe()
+
+        # The security primitive: preconditions vs LIVE ground truth.
+        missing = frozenset(act.preconditions) - truth
+        if missing:
+            self._append({
+                "type": "refusal", "action": name, "actor": "agent",
+                "missing_preconditions": sorted(missing),
+                "pre_state": state_hash(truth),
+            })
+            self.status = "halted_precondition_failed"
+            return False
+
+        # FINRA-style human checkpoint: gated tools never auto-execute.
+        if name in self.sys.human_gated:
+            if human_approver is None or not human_approver(name):
+                self._append({
+                    "type": "checkpoint_blocked", "action": name,
+                    "actor": "agent", "pre_state": state_hash(truth),
+                    "note": "human approval required and not granted",
+                })
+                self.status = "blocked_awaiting_human"
+                return False
+            actor = "human"
+        else:
+            actor = "agent"
+
+        added, removed = self.sys.call(name)
+
+        # Contract-drift detection: observed delta vs published effects.
+        expected_add = frozenset(act.effects_add) - truth
+        unexpected_add = added - frozenset(act.effects_add)
+        missing_add = expected_add - added
+        unexpected_del = removed - frozenset(act.effects_del)
+        drift = {}
+        if unexpected_add:
+            drift["undocumented_side_effects"] = sorted(unexpected_add)
+        if missing_add:
+            drift["declared_effects_not_delivered"] = sorted(missing_add)
+        if unexpected_del:
+            drift["undocumented_deletions"] = sorted(unexpected_del)
+        if drift:
+            self.drift_events.append({"action": name, **drift})
+
+        self._append({
+            "type": "execution", "action": name, "actor": actor, "basis": basis,
+            "preconditions": sorted(act.preconditions),
+            "pre_state": state_hash(truth),
+            "post_state": state_hash(self.sys.observe()),
+            "added": sorted(added), "removed": sorted(removed),
+            "drift": drift or None,
+        })
+        self.world_model.observe(truth, name, self.sys.observe(),
+                                 event=f"{self.agent}/{self.task}/{self.records[-1]['seq']}",
+                                 source=f"audited-execution:{self.agent}:" + self.records[-1]["record_hash"])
+        return True
+
+    # -- the GATS loop: search, act under the guards, observe, search again --
+    def run(self, human_approver: Optional[Callable[[str], bool]] = None) -> bool:
+        """Receding-horizon episode. Each step searches from live truth with
+        whatever evidence any agent has written to the shared graph. When no
+        simulated path reaches the goal, the runtime heads for the nearest tool
+        the model cannot predict (its outcome becomes evidence); those steps are
+        recorded as exploration. When no such tool is reachable it stops instead
+        of executing hopeless actions."""
+        planner = self._planner()
+        self.search_results = []
+        for _ in range(self.max_steps):
+            state = self.sys.observe()
+            if self.goal <= state:
+                self.status = "goal_reached"
+                return True
+            self.world_model.sync()
+            result = planner.search(state, self.goal)
+            self.search_results.append(result)
+            action, basis = result.action, "search"
+            if result.goal_hits == 0:
+                action, basis = self._toward_unmodeled(state), "exploration"
+            if action is None:
+                self.status = "no_modeled_path"
+                return False
+            if basis == "exploration":
+                self.explorations += 1
+            prediction = self.world_model.predict(state, action)
+            if not self._step(action, human_approver, basis):
+                return False
+            if prediction is not None and self.sys.observe() not in {o.state for o in prediction.outcomes}:
+                self.divergences += 1
+                self.divergent_actions.append(action)
+        self.status = "goal_reached" if self.goal <= self.sys.observe() else "step_limit"
+        return self.status == "goal_reached"
+
+    def _toward_unmodeled(self, state: FrozenSet[str]) -> Optional[str]:
+        """First step of the shortest modeled path to a state where a tool the
+        model cannot predict, and whose published contract would bring the goal
+        nearer, becomes applicable. None when no such tool is reachable. The
+        contract guides where to look; it is never used as a prediction."""
+        def helpful_unmodeled(s):
+            best = None
+            for act in self.actions:
+                if (not frozenset(act.preconditions) <= s
+                        or self.world_model.predict(s, act.name) is not None):
+                    continue
+                promised = (s - frozenset(act.effects_del)) | frozenset(act.effects_add)
+                distance = self._published_distance(promised)
+                if distance != float("inf") and (best is None or (distance, act.name) < best):
+                    best = (distance, act.name)
+            return best[1] if best else None
+
+        with self.world_model.graph.prediction_batch():
+            queue, seen = deque([(state, None)]), {state}
+            while queue and len(seen) <= 256:
+                current, first = queue.popleft()
+                candidate = helpful_unmodeled(current)
+                if candidate is not None:
+                    return first or candidate
+                for act in self.world_model.applicable(current):
+                    prediction = self.world_model.predict(current, act.name)
+                    if prediction is None:
+                        continue
+                    following = max(prediction.outcomes, key=lambda o: o.probability).state
+                    if following not in seen:
+                        seen.add(following)
+                        queue.append((following, first or act.name))
+        return None
 
     # -- the injected/compromised path --------------------------------------
     def attempt_injection(self, lie_actions: List[str],

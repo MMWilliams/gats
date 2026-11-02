@@ -43,6 +43,7 @@ class SearchResult:
     model_requests: int
     max_tree_depth: int
     status: str
+    goal_hits: int
     root: dict
 
 
@@ -77,7 +78,7 @@ class MCTSPlanner:
     def _search(self, initial, goal):
         initial, goal = facts(initial), facts(goal)
         if goal <= initial:
-            return SearchResult(None, 0, 0, 0, 0, "goal", {})
+            return SearchResult(None, 0, 0, 0, 0, "goal", 0, {})
         rng = random.Random(hashlib.sha256(canonical([self.seed, sorted(initial), sorted(goal)]).encode()).digest())
         # Reuse pure heuristic values across modeled steps while the model and
         # goal stay unchanged. Observed outcomes invalidate this entire cache.
@@ -87,7 +88,7 @@ class MCTSPlanner:
             self._heuristic_key = heuristic_key
         distance = self._heuristic
         candidate_cache = {}
-        requests = expansions = completed = deepest = 0
+        requests = expansions = completed = deepest = hits = 0
         status = "budget"
 
         def candidates(state):
@@ -124,21 +125,24 @@ class MCTSPlanner:
             return rng.choice([k for k, v in scores.items() if v == best])
 
         def rollout(state, remaining, seen):
+            """Discounted value and whether the goal was actually reached."""
             multiplier = 1.0
             for _ in range(remaining):
                 if goal <= state:
-                    return multiplier
+                    return multiplier, True
                 choices = candidates(state)
                 if not choices:
-                    return 0.0
+                    return 0.0, False
                 name = (rng.choice(list(choices)) if rng.random() < self.rollout_epsilon else
                         pick({name: p for name, (_, p) in choices.items()}))
                 state = sample(choices[name][0])
                 multiplier *= self.discount ** self.model.by_name[name].cost
                 if state in seen:
-                    return 0.0
+                    return 0.0, False
                 seen.add(state)
-            return multiplier * (1.0 if goal <= state else 0.25 / (1.0 + distance(state)))
+            if goal <= state:
+                return multiplier, True
+            return multiplier * 0.25 / (1.0 + distance(state)), False
 
         root = Node(initial)
         for _ in range(self.simulations):
@@ -148,6 +152,7 @@ class MCTSPlanner:
                 for depth in range(self.max_depth):
                     if goal <= node.state:
                         reward = 1.0
+                        hits += 1
                         break
                     if not node.branches:
                         node.branches = {name: Branch(p, prior) for name, (p, prior) in candidates(node.state).items()}
@@ -166,6 +171,7 @@ class MCTSPlanner:
                     deepest = max(deepest, depth + 1)
                     if goal <= state:
                         reward = 1.0
+                        hits += 1
                         break
                     if state in seen:
                         break
@@ -173,7 +179,8 @@ class MCTSPlanner:
                     if state not in branch.children:
                         branch.children[state] = Node(state)
                         expansions += 1
-                        reward = rollout(state, self.max_depth - depth - 1, seen)
+                        reward, reached = rollout(state, self.max_depth - depth - 1, seen)
+                        hits += reached
                         break
                     node = branch.children[state]
                 else:
@@ -193,4 +200,4 @@ class MCTSPlanner:
                                                 visited[name].prior)) if visited else None)
         if action is None and status != "query_limit":
             status = "no_modeled_action"
-        return SearchResult(action, completed, expansions, requests, deepest, status, stats)
+        return SearchResult(action, completed, expansions, requests, deepest, status, hits, stats)

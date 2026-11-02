@@ -24,9 +24,13 @@ class TransitionGraph:
     def __init__(self, path=":memory:"):
         if str(path) != ":memory:":
             Path(path).parent.mkdir(parents=True, exist_ok=True)
-        self.db = sqlite3.connect(str(path))
+        self.db = sqlite3.connect(str(path), timeout=30.0)
         self._prediction_batch_depth = 0
         self.db.execute("PRAGMA foreign_keys=ON")
+        if str(path) != ":memory:":
+            # Several agents share one file: readers never block the writer.
+            self.db.execute("PRAGMA journal_mode=WAL")
+            self.db.execute("PRAGMA busy_timeout=30000")
         self.db.executescript("""
             CREATE TABLE IF NOT EXISTS catalogs(
                 namespace TEXT PRIMARY KEY, body TEXT NOT NULL);
@@ -73,6 +77,22 @@ class TransitionGraph:
         with self.db:
             self.db.execute("INSERT OR IGNORE INTO catalogs VALUES (?,?)", (namespace, body))
 
+    def catalog(self, namespace):
+        row = self.db.execute("SELECT body FROM catalogs WHERE namespace=?", (namespace,)).fetchone()
+        return json.loads(row[0]) if row else None
+
+    def namespaces(self):
+        return [r[0] for r in self.db.execute("SELECT namespace FROM catalogs ORDER BY namespace")]
+
+    def observations_since(self, namespace, rowid):
+        """Evidence appended after `rowid`, in commit order, by any writer of this file."""
+        rows = self.db.execute("""SELECT o.rowid,o.event,s.facts,o.action,t.facts,o.source
+            FROM observations o JOIN states s ON s.namespace=o.namespace AND s.id=o.before_id
+            JOIN states t ON t.namespace=o.namespace AND t.id=o.after_id
+            WHERE o.namespace=? AND o.rowid>? ORDER BY o.rowid""", (namespace, rowid))
+        return [{"rowid": r, "event": e, "before": json.loads(b), "action": a,
+                 "after": json.loads(t), "source": src} for r, e, b, a, t, src in rows]
+
     def _state(self, namespace, state):
         state = facts(state)
         key = state_id(state)
@@ -81,12 +101,10 @@ class TransitionGraph:
         return key
 
     def observations(self, namespace):
-        rows = self.db.execute("""SELECT o.event,s.facts,o.action,t.facts,o.source
-            FROM observations o JOIN states s ON s.namespace=o.namespace AND s.id=o.before_id
-            JOIN states t ON t.namespace=o.namespace AND t.id=o.after_id
-            WHERE o.namespace=? ORDER BY o.event""", (namespace,))
-        return [{"event": e, "before": json.loads(b), "action": a,
-                 "after": json.loads(t), "source": src} for e, b, a, t, src in rows]
+        rows = self.observations_since(namespace, 0)
+        for row in rows:
+            del row["rowid"]
+        return sorted(rows, key=lambda r: r["event"])
 
     def observe(self, namespace, event, before, action, after, source):
         if self._prediction_batch_depth:
@@ -175,7 +193,7 @@ class TransitionGraph:
                 errors.append("unknown action")
         for r in data["predictions"]:
             p = r["body"]
-            if p["layer"] not in {"L1", "L2"} or p["support"] < 0 or r["revision"] < 0:
+            if p["layer"] not in {"L1", "L1r", "L2"} or p["support"] < 0 or r["revision"] < 0:
                 errors.append("invalid prediction metadata")
             probabilities = [o["probability"] for o in p["outcomes"]]
             if (not probabilities or any(not math.isfinite(v) or not 0 < v <= 1 for v in probabilities)
