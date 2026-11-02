@@ -1,5 +1,31 @@
 # GATS — Graph-Augmented Tree Search with Layered World Models
 
+## Current development: MCTS and populated world models
+
+The active development runtime is [gats_mcts](gats_mcts/README.md). The business
+integration runtime now uses full MCTS (PUCT selection, expansion, rollout and
+path backup), with explicit L1 contracts, observation-backed L2 distributions,
+and a persistent SQLite transition graph. Predictions and execution evidence
+remain distinct. No LLM or network service is required.
+
+```bash
+python -m gats_mcts benchmark --output results/mcts-new --seeds 11 29 47
+python -m gats_mcts inspect --database results/mcts-new/graph.sqlite
+python -m integrations.run_deep
+```
+
+See the [verification record](gats_mcts/VERIFICATION.md) for actual results and
+known legacy test failures. The current paper is the v2.2 research draft at
+`C:/Users/reese/gats-submissions/jair/gats_v2_2_2026_09_17.pdf`; its local source
+and frozen evaluation are separate from this new development implementation.
+
+## Historical reproduction interface
+
+The following original description and commands are retained for provenance.
+Their headline results do not evaluate the new MCTS implementation. In
+particular, the later v2.2 manuscript explicitly withdraws general 100% success
+and planning-superiority interpretations of these early experiments.
+
 Reproducibility repository for the preprint
 **"GATS: Graph-Augmented Tree Search with Layered World Models for Efficient
 Agent Planning"** ([paper/gats_preprint.pdf](paper/gats_preprint.pdf)).

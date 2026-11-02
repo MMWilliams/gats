@@ -10,8 +10,8 @@ The boundary is strict, mirroring a real integration:
     (b) observe(), a read-only snapshot, the same thing a status API or
     log stream gives you in production.
   - AuditedRuntime is the embedded GATS layer: it plans with the real
-    GATSPlanner from the demo engine (the same State/Action/UCB1 core as
-    experiments/run_gats_eval.py), then executes tool-by-tool, verifying
+    MCTS planner from gats_mcts over public symbolic contracts, then
+    executes tool-by-tool, verifying
     each action's preconditions against the company's LIVE ground truth
     at execution time, never against what any upstream model claims.
   - Every execution appends a hash-chained audit record (prev-hash
@@ -30,6 +30,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 
+from gats_mcts import (Action as ModelAction, Contract, Effect,
+                       LayeredWorldModel, MCTSPlanner)
+
 # --- load the real demo engine (single source of truth for the planner) ----
 _DEMOS = Path(__file__).resolve().parent.parent / "demos"
 _spec = importlib.util.spec_from_file_location("agent_lies_demo", _DEMOS / "agent_lies_demo.py")
@@ -40,22 +43,6 @@ _spec.loader.exec_module(_eng)
 
 State = _eng.State
 Action = _eng.Action
-GATSPlanner = _eng.GATSPlanner
-
-
-class AdaptiveGATSPlanner(GATSPlanner):
-    """Same UCB1 search, but the per-decision budget scales with the number
-    of applicable actions so every candidate is visited at least twice.
-    Without this, workflows with wide applicable sets can exhaust a fixed
-    budget before visiting a strictly-better action."""
-
-    def _search(self, state, applicable, all_actions):
-        old = self.budget
-        self.budget = max(old, 3 * len(applicable))
-        try:
-            return super()._search(state, applicable, all_actions)
-        finally:
-            self.budget = old
 
 
 # ===========================================================================
@@ -154,6 +141,13 @@ class AuditedRuntime:
         self.security_events: List[dict] = []
         self.drift_events: List[dict] = []
         self.status = "init"
+        # No context/write completeness promise is available from these tool
+        # APIs, so runtime observations use conservative exact-state L2 keys.
+        self.world_model = LayeredWorldModel(
+            [ModelAction(a.name, a.preconditions) for a in self.actions],
+            {a.name: Contract(Effect(a.effects_add, a.effects_del)) for a in self.actions},
+            namespace=system.company_id)
+        self.search_results = []
 
     # -- audit chain --------------------------------------------------------
     def _append(self, rec: dict) -> None:
@@ -168,60 +162,28 @@ class AuditedRuntime:
         return self.records[-1]["record_hash"] if self.records else "GENESIS"
 
     # -- planning (zero LLM calls) ------------------------------------------
-    # Value guidance uses a delete-relaxation layer count (the classic
-    # relaxed-planning-graph distance): deterministic, linear-time, and it
-    # scales to long workflows where exact BFS over state subsets explodes.
-    # It is computed on the REAL successor state, so actions that destroy
-    # progress (deleted facts must be re-established) score strictly worse.
     def plan(self) -> Optional[List[str]]:
-        horizon = self.horizon
-
-        def relaxed_value(state, actions):
-            # Additive heuristic h_add: cost(fact) = 0 if held, else
-            # min over producers of (1 + sum of precondition costs).
-            # Any real progress strictly lowers the goal cost, so no-ops
-            # and progress-destroying actions score strictly worse.
-            if state.is_goal():
-                return 10.0
-            INF = 1e9
-            cost = {f: 0.0 for f in state.inventory}
-            for _ in range(horizon * 2):
-                changed = False
-                for a in actions:
-                    c_pre, ok = 0.0, True
-                    for p in a.preconditions:
-                        cp = cost.get(p, INF)
-                        if cp >= INF:
-                            ok = False
-                            break
-                        c_pre += cp
-                    if not ok:
-                        continue
-                    new_c = 1.0 + c_pre
-                    for f in a.effects_add:
-                        if new_c < cost.get(f, INF):
-                            cost[f] = new_c
-                            changed = True
-                if not changed:
-                    break
-            total = 0.0
-            for g in state.goal:
-                cg = cost.get(g, INF)
-                if cg >= INF:
-                    return 0.0
-                total += cg
-            return 10.0 / (1.0 + total)
-
-        old = _eng.state_value
-        _eng.state_value = relaxed_value
-        try:
-            initial = State(self.goal, self.sys.observe())
-            plan = AdaptiveGATSPlanner(
-                budget=self.budget, max_steps=self.max_steps).plan(
-                initial, self.actions)
-        finally:
-            _eng.state_value = old
-        return [a.name for a in plan] if plan is not None else None
+        """Produce a modeled plan without executing tools or creating evidence."""
+        planner = MCTSPlanner(self.world_model, simulations=self.budget,
+                              max_depth=max(self.horizon, self.max_steps), seed=0)
+        state, plan, seen = self.sys.observe(), [], set()
+        self.search_results = []
+        for _ in range(self.max_steps):
+            if self.goal <= state:
+                return plan
+            if state in seen:
+                return None
+            seen.add(state)
+            result = planner.search(state, self.goal)
+            self.search_results.append(result)
+            if result.action is None:
+                return None
+            prediction = self.world_model.predict(state, result.action)
+            # Existing contract: return one modeled sequence. Execution still
+            # checks live truth and human gates at every step.
+            state = max(prediction.outcomes, key=lambda o: o.probability).state
+            plan.append(result.action)
+        return plan if self.goal <= state else None
 
     # -- execution with per-step ground-truth verification ------------------
     def execute(self, plan_names: List[str],
@@ -281,6 +243,9 @@ class AuditedRuntime:
                 "added": sorted(added), "removed": sorted(removed),
                 "drift": drift or None,
             })
+            self.world_model.observe(truth, name, self.sys.observe(),
+                                     event=str(self.records[-1]["seq"]),
+                                     source="audited-execution:" + self.records[-1]["record_hash"])
 
         goal_ok = self.goal.issubset(self.sys.observe())
         self.status = "goal_reached" if goal_ok else "plan_exhausted"

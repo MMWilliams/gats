@@ -131,13 +131,21 @@ class ProvenanceGraph:
 
     # -- queries -------------------------------------------------------------
     def why(self, company: str, fact: str, at_seq: Optional[int] = None,
-            _memo: Optional[dict] = None) -> Optional[dict]:
+            _memo: Optional[dict] = None,
+            _requires: Optional[dict] = None) -> Optional[dict]:
         """Support tree: which event established `fact` (as of at_seq), and
         recursively, what supported THAT event's preconditions. Memoized on
         (fact, resolved producer) so deep DAGs stay linear; subtrees are
         shared, not duplicated."""
         if _memo is None:
             _memo = {}
+        if _requires is None:
+            # Build once per public query. Keeping this index local avoids
+            # stale adjacency after add_record(), deserialization or edits.
+            _requires = {}
+            for edge in self.edges:
+                if edge["type"] == "REQUIRES":
+                    _requires.setdefault(edge["src"], []).append(edge["dst"])
         fid = self._fact_id(company, fact)
         if fid not in self.nodes:
             return None
@@ -162,11 +170,10 @@ class ProvenanceGraph:
         eid = f"act::{company}::{seq}"
         event = self.nodes.get(eid, {})
         supports = []
-        for e in self.edges:
-            if e["type"] == "REQUIRES" and e["src"] == eid:
-                pre_name = self.nodes[e["dst"]]["name"]
-                supports.append(self.why(company, pre_name, at_seq=seq,
-                                         _memo=_memo))
+        for required_id in _requires.get(eid, ()):
+            pre_name = self.nodes[required_id]["name"]
+            supports.append(self.why(company, pre_name, at_seq=seq,
+                                     _memo=_memo, _requires=_requires))
         result = {"fact": fact, "source": "event", "seq": seq,
                   "action": event.get("action"),
                   "record_hash": event.get("record_hash"),
