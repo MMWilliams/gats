@@ -15,6 +15,9 @@ from .graph import TransitionGraph
 # L1r repaired contracts, multi-writer sync. A graph written under another
 # version is not reinterpreted.
 MODEL_VERSION = 2
+# In-process prediction cache bound; long runs over ever-new states would
+# otherwise grow it without limit. Evidence is never dropped.
+MAX_CACHED_PREDICTIONS = 200_000
 
 
 class Repair(NamedTuple):
@@ -212,6 +215,8 @@ class LayeredWorldModel:
         self.usage[prediction.layer] += 1
         self.usage["served_" + prediction.layer] += 1
         self.graph.put_prediction(self.namespace, state, name, self.revisions[name], prediction)
+        if len(self.cache) >= MAX_CACHED_PREDICTIONS:
+            self.cache.clear()
         self.cache[key] = prediction
         return prediction
 

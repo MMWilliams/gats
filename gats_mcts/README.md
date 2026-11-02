@@ -41,12 +41,21 @@ tables are preserved. Current paper:
   `integrations/run_corporate.py` runs agent A cold, then agent B in a separate
   process on the same graph, and compares. Results and caveats:
   [integrations/CORPORATE_RESULTS.md](../integrations/CORPORATE_RESULTS.md).
+- **A long-horizon program** (`integrations/run_program.py`): run the company
+  for N months. The program is itself a company system whose tools run whole
+  workstreams; each month GATS creates one MCTS plan over the abstract actions
+  and their cross-workstream dependencies, saves it, follows it, and replans
+  on a refusal. Every abstract step is checkpointed; `--resume` continues
+  without re-running finished workstreams. Prediction caching is off for this
+  run (`TransitionGraph(store_predictions=False)`): the file holds evidence
+  only. See [integrations/PROGRAM_RUN.md](../integrations/PROGRAM_RUN.md).
 
 ```powershell
 python -m integrations.run_corporate run --database results/corporate/shared.sqlite --agent A --cases c1 c2 --output results/corporate/A.json
 python -m integrations.run_corporate run --database results/corporate/shared.sqlite --agent B --cases c1 c3 --output results/corporate/B.json
 python -m integrations.run_corporate compare results/corporate/A.json results/corporate/B.json --output results/corporate/comparison.json
-python -m pytest tests/test_mcts_hardening.py tests/test_corporate.py -q
+python -m pytest tests/test_mcts_hardening.py tests/test_corporate.py tests/test_program.py -q
+python -m integrations.run_program run --months 95 --cases 2 --output C:/Users/reese/gats-program --database C:/Users/reese/gats-program/shared.sqlite --resume
 ```
 
 ## Run and inspect

@@ -21,10 +21,13 @@ def state_id(state):
 
 
 class TransitionGraph:
-    def __init__(self, path=":memory:"):
+    def __init__(self, path=":memory:", store_predictions=True):
+        """Evidence is always stored. Predictions are a regenerable cache; long runs
+        over ever-new states switch it off so the file holds evidence only."""
         if str(path) != ":memory:":
             Path(path).parent.mkdir(parents=True, exist_ok=True)
         self.db = sqlite3.connect(str(path), timeout=30.0)
+        self.store_predictions = store_predictions
         self._prediction_batch_depth = 0
         self.db.execute("PRAGMA foreign_keys=ON")
         if str(path) != ":memory:":
@@ -129,6 +132,8 @@ class TransitionGraph:
         return True
 
     def get_prediction(self, namespace, state, action, revision):
+        if not self.store_predictions:
+            return None
         row = self.db.execute("""SELECT body FROM predictions
             WHERE namespace=? AND before_id=? AND action=? AND revision=?""",
                               (namespace, state_id(state), action, revision)).fetchone()
@@ -140,6 +145,8 @@ class TransitionGraph:
                           data["support"], data["confidence_lower"])
 
     def put_prediction(self, namespace, state, action, revision, prediction):
+        if not self.store_predictions:
+            return
         data = {"layer": prediction.layer, "support": prediction.support,
                 "confidence_lower": prediction.confidence_lower,
                 "outcomes": [{"state": sorted(o.state), "probability": o.probability}

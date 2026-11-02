@@ -1,8 +1,16 @@
 # GATS research backlog
 
-- Long-horizon program run (reese 11-02): a multi-phase enterprise program over
-  the fifty corporate workstreams, planned up front and executed with repair
-  for about twelve hours; see `.claude/HANDOFF.md` while it is in flight.
+- Long-horizon program run (reese 11-02): 95 months x 2 cases launched as
+  scheduled task `GATS-Program` into `C:\Users\reese\gats-program`; when it
+  finishes, read `report.json`, record the learning curve and the month timing
+  in `integrations/PROGRAM_RUN.md`, and delete the task
+  (`schtasks /delete /tn GATS-Program /f`). See `.claude/HANDOFF.md`.
+- Program design follow-ups: months are structurally identical, so the monthly
+  plan is the same ordering problem; add month-to-month variation (volume,
+  capacity tokens such as limited legal or CFO slots) and real top-level drift.
+- Evidence replay per model instance is O(all observations of the namespace);
+  fine at this scale, but a much longer run needs aggregated evidence or
+  long-lived model instances.
 - Simultaneous writers: two processes appending to one shared graph at the
   same instant are not exercised (WAL + busy timeout only tested sequentially
   and interleaved in one process).

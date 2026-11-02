@@ -218,13 +218,14 @@ class AuditedRuntime:
     def execute(self, plan_names: List[str],
                 human_approver: Optional[Callable[[str], bool]] = None) -> bool:
         for name in plan_names:
-            if not self._step(name, human_approver, "plan"):
+            if not self.step(name, human_approver, "plan"):
                 return False
         goal_ok = self.goal.issubset(self.sys.observe())
         self.status = "goal_reached" if goal_ok else "plan_exhausted"
         return goal_ok
 
-    def _step(self, name: str, human_approver, basis: str) -> bool:
+    def step(self, name: str, human_approver, basis: str = "plan") -> bool:
+        """Execute one action under the guards; False after a refusal or a blocked gate."""
         act = self.by_name[name]
         truth = self.sys.observe()
 
@@ -310,7 +311,7 @@ class AuditedRuntime:
             if basis == "exploration":
                 self.explorations += 1
             prediction = self.world_model.predict(state, action)
-            if not self._step(action, human_approver, basis):
+            if not self.step(action, human_approver, basis):
                 return False
             if prediction is not None and self.sys.observe() not in {o.state for o in prediction.outcomes}:
                 self.divergences += 1
